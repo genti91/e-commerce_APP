@@ -11,7 +11,6 @@ import { Searchbar } from 'react-native-paper'
 
 export default function Home() {
 
-    const route = useRoute();
   let games = useSelector(state => state.products);
   let searchered = useSelector(state => state.searchered);
   let dispatch = useDispatch();
