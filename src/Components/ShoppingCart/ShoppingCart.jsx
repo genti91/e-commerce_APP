@@ -4,7 +4,8 @@ import { StyleSheet, Text, View, FlatList } from 'react-native';
 import ProductCard from '../Cards/ProductCard/ProductCard';
 import { addToCart, getAllProducts } from "../../redux/actions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const REACT_APP_URL = 'http://10.0.2.2:3001/'
+// const REACT_APP_URL = 'http://10.0.2.2:3001/'
+const {REACT_APP_URL} = process.env;
 
 export default function ShoppingCart() {
   let cart = useSelector(state => state.cart);
@@ -36,7 +37,7 @@ export default function ShoppingCart() {
   }, [cart])
 
 
-  cart !== undefined && (cart.forEach(LS => {
+  cart !== null && (cart.forEach(LS => {
     fg = games.filter(games => LS === games.id);
     // console.log(fg)
     if (fg.length > 0) {

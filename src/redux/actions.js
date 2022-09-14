@@ -37,8 +37,8 @@ export const PUT_USER = "PUT_USER";
 export const FILTRED_PRICE = "FILTRED_PRICE"
 export const GET_USER_ORDERS = "GET_USER_ORDERS"
 
-//const {REACT_APP_URL} = process.env;
-const REACT_APP_URL = 'http://10.0.2.2:3001/'
+const {REACT_APP_URL} = process.env;
+// const REACT_APP_URL = 'http://10.0.2.2:3001/'
 
 export function getAllProducts(){
     return function(dispatch){
