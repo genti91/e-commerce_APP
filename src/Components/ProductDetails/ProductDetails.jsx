@@ -1,11 +1,133 @@
+import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, FlatList, Image, Dimensions, TouchableHighlight } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart, addWish } from '../../redux/actions';
+const REACT_APP_URL = 'http://10.0.2.2:3001/'
 
-export default function ProductDetails() {
+const {width} = Dimensions.get('window');
+const SPACING = 5;
+const ITEM_LENGTH = width; // Item is a square. Therefore, its height and width are of the same length.
+const BORDER_RADIUS = 20;
+
+export default function ProductDetails({route}) {
+
+  console.log(route.params.id)
+  let id = route.params.id
+
+  const [game, setGame] = useState({});
+  const [disabled, setDisabled] = useState(true); // si no esta logueado desabilita addwish
+  let cart = useSelector(state=>state.cart);
+  const [reviews, setReviews] = useState();
+  
+  let user = useSelector(state => state.users); // se trae el usuario logueado para permitir agregar a wishlist
+  let dispatch = useDispatch();
+
+  useEffect(() => {
+    if (user.length) setDisabled(false); //si cuando se monta el componente hay usuario logueado habilita el addwish
+    setTimeout(() => {
+      axios.get(`${REACT_APP_URL}videogames/${id}`)
+      .then(res => {
+        setGame(res.data)
+        axios.get(`${REACT_APP_URL}reviews/${id}`)
+        .then(res => setReviews(res.data.filter((e)=> !e.reported)))
+        .catch(err => console.log(err))
+      })
+      .catch(err => console.log(err))
+    }, 500);
+  }, [id, user]);
+
+  function handleCart(){
+    let fC = cart.filter(e=>e===id);
+    if(fC.length>0){
+    alert("Juego ya agregado al carrito anteriormente!")
+    }else{
+      dispatch(addToCart(game.id)) // dispacha al carrito de compras con el id del game en la db
+    }
+  }
+
   return (
     <View>
-      <Text>Product Details</Text>
-      <StatusBar style="auto" />
+      <Text style={styles.name}>{route.params.name}</Text>
+      <FlatList
+      contentContainerStyle={{alignItems: 'center'}}
+      keyExtractor={item => item.image}
+      horizontal
+      data={game.Screenshots}
+      pagingEnabled 
+      showsHorizontalScrollIndicator={false}
+      renderItem={({ item }) => (
+        <View style={{width: ITEM_LENGTH}}>
+          <View style={styles.itemContent}>
+            <Image source={{uri: item.image}} style={styles.itemImage} />
+          </View>
+        </View>
+        )}
+      />
+      <View style={styles.btnContainer}>
+      <TouchableHighlight
+          style={styles.button}
+          onPress={(e) => handleCart(e)}
+      >
+          <Text style={styles.textButton}>Add to Cart</Text>
+      </TouchableHighlight>
+      <TouchableHighlight
+          style={styles.button}
+          onPress={(e) => handleWhishList(e)}
+      >
+          <Text style={styles.textButton}>Add to WhishList</Text>
+      </TouchableHighlight>
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {},
+  itemContent: {
+    marginHorizontal: SPACING * 3,
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: BORDER_RADIUS + SPACING * 2,
+  },
+  itemText: {
+    fontSize: 24,
+    position: 'absolute',
+    bottom: SPACING * 2,
+    right: SPACING * 2,
+    color: 'white',
+    fontWeight: '600',
+  },
+  itemImage: {
+    width: '100%',
+    height: ITEM_LENGTH,
+    borderRadius: BORDER_RADIUS,
+    resizeMode: 'cover',
+  },
+  name: {
+    textAlign: 'center',
+    fontSize: 50
+  },
+  btnContainer: {
+    alignItems: 'center',
+  },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: 'black',
+    marginTop:20,
+    width:200
+  },
+  textButton: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'white',
+  },
+});

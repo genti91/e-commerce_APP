@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { ActivityIndicator } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -12,9 +12,15 @@ import WhishList from './src/Components/WishList/WhishList';
 import MyStore from './src/Components/MyStore/MyStore';
 import { Provider, useSelector } from 'react-redux';
 import store from './src/redux/store';
-import { Text, View } from 'react-native';
+import { Text, View, Image, StyleSheet } from 'react-native';
 import CreateUser from './src/Components/CreateUser/CreateUser';
 import HomeStack from './src/Components/HomeStack/HomeStack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { loadUser } from './src/Components/Login/LoadUser';
+import { useDispatch } from 'react-redux';
+import { getUsers, loadCart } from './src/redux/actions';
+import UserProfile from './src/Components/UserProfile/UserProfile';
+import { loadCartStorage } from './src/Components/ShoppingCart/loadCartStorage';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -29,9 +35,30 @@ const AppWrapper = () => {
 
 const App = () => {
 
+  const [loading, setLoading] = useState(true);
+  let dispatch = useDispatch();
+
+  useEffect( () => {
+    loadUser().then((res) => {
+      dispatch(getUsers(res.token))
+      loadCartStorage().then((cart) => {
+        dispatch(loadCart(cart));
+      })
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+    })
+  }, []);
+
   let {user} = useSelector(state=>state.users);
 
   return (
+    <View style={{height: '100%'}}>
+      { loading ? <View style={styles.loading}>
+        <Image style={styles.img} source={require('./logo.png')} />
+        <ActivityIndicator size="large" color="#00ff00" />
+    </View> :
+
     <NavigationContainer>
       {!user && 
       <Stack.Navigator>
@@ -66,15 +93,29 @@ const App = () => {
             (<MaterialCommunityIcons name="library" color={color} size={size} />)
             }}
         />
-        <Tab.Screen name='Profile' component={ShoppingCart} 
+        <Tab.Screen name='Profile' component={UserProfile} 
           options={{
             tabBarIcon: ({ color, size }) => 
             (<MaterialCommunityIcons name="person" color={color} size={size} />)
           }}
         />
       </Tab.Navigator>}
-    </NavigationContainer>
+    </NavigationContainer>}
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  img : {
+      width: 150,
+      height: 150,
+      marginBottom: 20,
+  }
+})
 
 export default AppWrapper;
