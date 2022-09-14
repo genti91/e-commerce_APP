@@ -39,8 +39,11 @@ export default function ProductDetails({route}) {
   }, [id, user]);
 
   function handleCart(){
-    let fC = cart.filter(e=>e===id);
-    if(fC.length>0){
+    let fC;
+    if (cart) {
+      fC = cart.filter(e=>e===id);
+    }
+    if(fC && fC.length>0){
     alert("Juego ya agregado al carrito anteriormente!")
     }else{
       dispatch(addToCart(game.id)) // dispacha al carrito de compras con el id del game en la db
