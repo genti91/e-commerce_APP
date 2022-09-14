@@ -33,7 +33,6 @@ import { GET_ALL_PRODUCTS,
 
 
    } from "./actions.js";
-import { products } from "./products.js";
 /* import { products } from "./products.js" */
 
 

@@ -1,20 +1,78 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { ActivityIndicator } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import MaterialCommunityIcons from 'react-native-vector-icons/Ionicons';
+import LoginRN from './src/Components/Login/LoginRN';
+import Home from './src/Components/Home/Home';
+import ShoppingCart from './src/Components/ShoppingCart/ShoppingCart';
+import { color } from 'react-native-reanimated';
+import WhishList from './src/Components/WishList/WhishList';
+import MyStore from './src/Components/MyStore/MyStore';
+import { Provider, useSelector } from 'react-redux';
+import store from './src/redux/store';
+import { Text, View } from 'react-native';
+import CreateUser from './src/Components/CreateUser/CreateUser';
 
-export default function App() {
+const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+const AppWrapper = () => {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  )
+}
+
+const App = () => {
+
+  let {user} = useSelector(state=>state.users);
+
+  return (
+    <NavigationContainer>
+      {!user && 
+      <Stack.Navigator>
+        <Stack.Screen name="Login" component={LoginRN} />
+        <Stack.Screen name="CreateUser" component={CreateUser} />
+      </Stack.Navigator>
+     }
+      {user &&
+      <Tab.Navigator>
+      <Tab.Screen name='WishList' component={WhishList} 
+          options={{
+            tabBarIcon: ({ color, size }) => 
+            (<MaterialCommunityIcons name="heart" color={color} size={size} />)
+            }}
+        />
+        <Tab.Screen name='Cart' component={ShoppingCart} 
+          options={{
+            tabBarIcon: ({ color, size }) => 
+            (<MaterialCommunityIcons name="cart" color={color} size={size} />)
+          }}
+        />
+        <Tab.Screen name='Home' component={Home} 
+          options={{
+            tabBarIcon: ({ color, size }) => 
+            (<MaterialCommunityIcons name="home" color={color} size={size} />)
+            }}
+        />
+        <Tab.Screen name='MyStore' component={MyStore} 
+          options={{
+            tabBarIcon: ({ color, size }) => 
+            (<MaterialCommunityIcons name="library" color={color} size={size} />)
+            }}
+        />
+        <Tab.Screen name='Profile' component={ShoppingCart} 
+          options={{
+            tabBarIcon: ({ color, size }) => 
+            (<MaterialCommunityIcons name="person" color={color} size={size} />)
+          }}
+        />
+      </Tab.Navigator>}
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default AppWrapper;
