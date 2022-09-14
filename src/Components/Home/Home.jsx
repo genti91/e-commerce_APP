@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, FlatList } from 'react-native';
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector} from 'react-redux';
-import { getAllProducts, setCurrentPage, getUsers, addWish, resetWish } from '../../redux/actions';
+import { getAllProducts, setCurrentPage, getUsers, addWish, resetWish, searchProduct, clear } from '../../redux/actions';
 import ProductCard from '../Cards/ProductCard/ProductCard';
 import { Searchbar } from 'react-native-paper'
 //import Pagination from '../Pagination/Pagination';
@@ -11,6 +11,7 @@ import { Searchbar } from 'react-native-paper'
 
 export default function Home() {
 
+    const route = useRoute();
   let games = useSelector(state => state.products);
   let searchered = useSelector(state => state.searchered);
   let dispatch = useDispatch();
@@ -43,6 +44,19 @@ export default function Home() {
   //     dispatch(resetWish());
   // },[user])
 
+  let [name, setName] = useState('');
+  function handleChange(e) {
+    setName(e)
+  }
+  function handleSubmit() {
+    if (!name) {
+        dispatch(clear())
+    }else{
+        dispatch(searchProduct(name));
+        dispatch(setCurrentPage(1));
+        setName("");
+    }
+  }
 
   return (
     <View>
@@ -50,12 +64,13 @@ export default function Home() {
       <View>
           <Searchbar
               placeholder="Search for character..."
-              //onChangeText={value => setSearch(value)}
-              //value={search}
-              //onIconPress={searchCharacter}
-              //onSubmitEditing={searchCharacter}
+              onChangeText={value => handleChange(value)}
+              value={name}
+              onIconPress={handleSubmit}
+              onSubmitEditing={handleSubmit}
           />
           <FlatList
+                style={{marginBottom:100}}
               data={currentGames}
               keyExtractor={({ id }) => id.toString()}
               renderItem={({ item }) => 

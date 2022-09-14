@@ -28,9 +28,8 @@ import { GET_ALL_PRODUCTS,
     PUT_USER,
     FILTRED_PRICE,
     GET_USER_ORDERS,
-    CLEAR_CART
-
-
+    CLEAR_CART,
+    LOAD_CART
 
    } from "./actions.js";
 /* import { products } from "./products.js" */
@@ -176,6 +175,11 @@ switch(action.type){
                 ...state,
                 cart: [...state.cart, action.payload]
             }
+    case LOAD_CART:
+        return{
+            ...state,
+            cart: action.payload
+        }
    case ADD_WISH:
        return{
            ...state,
@@ -258,7 +262,9 @@ switch(action.type){
    case RESET_USER :
        return{
           ...state,
-          users: {}
+          users: {},
+          cart: [],
+          wishlist: []
        }
     case REMOVE_FROM_CART:
     let cartF= state.cart.filter(e=>e!==action.payload); //filtrados sin el id pasado

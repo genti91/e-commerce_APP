@@ -81,6 +81,7 @@ export default function LoginRN() {
             onChangeText={(e) => handleEmail(e)}
         />
         <TextInput
+            secureTextEntry={true}
             style={styles.input}
             placeholder="Password"
             name="password"
@@ -105,7 +106,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5FCFF',
         marginTop: 30,
         paddingLeft: 15,
-        paddingRight: 15
+        paddingRight: 15,
+        justifyContent: 'center'
     },
     button : {
         backgroundColor : 'skyblue',

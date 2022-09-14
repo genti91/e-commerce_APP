@@ -1,4 +1,6 @@
 import axios from "axios";
+import { removeCart } from "./removeCart";
+import { saveCart } from "./saveCart";
 export const GET_ALL_PRODUCTS = "GET_ALL_PRODUCTS";
 export const FILTER_BY_GENRES = "FILTER_BY_GENRES";
 export const GET_GENRES = "GET_GENRES";
@@ -29,7 +31,7 @@ export const ORDER_USERS_DESC = "ORDER_USERS_DESC"
 export const GET_USER_REVIEWS = "GET_USER_REVIEWS"
 export const GET_USER_REPORTED_REVIEWS = "GET_USER_REPORTED_REVIEWS"
 export const GET_ALL_ORDERS = "GET_ALL_ORDERS"
-
+export const LOAD_CART = "LOAD_CART"
 export const PUT_USER = "PUT_USER";
 
 export const FILTRED_PRICE = "FILTRED_PRICE"
@@ -130,7 +132,8 @@ export function getUsers(token){
             })
             return response.data
         } catch (error) {
-            window.sessionStorage.removeItem('token');
+            //window.sessionStorage.removeItem('token');
+            console.log(err)
             return;
         }
 
@@ -192,6 +195,7 @@ export function filterByPlatforms(value){
 }
 
 export function addToCart(id){
+    saveCart(id);
     return function(dispatch){
         dispatch({
             type: ADD_TO_CART,
@@ -201,6 +205,7 @@ export function addToCart(id){
 }
 
 export function removeFromCart(id){
+    removeCart(id);
     return function(dispatch){
         dispatch({
             type: REMOVE_FROM_CART,
@@ -456,4 +461,10 @@ export function clearCart(){
     };
 };
 
+export function loadCart(payload){
+    return{
+        type: LOAD_CART,
+        payload
+    };
+};
 
