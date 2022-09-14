@@ -14,6 +14,7 @@ import { Provider, useSelector } from 'react-redux';
 import store from './src/redux/store';
 import { Text, View } from 'react-native';
 import CreateUser from './src/Components/CreateUser/CreateUser';
+import HomeStack from './src/Components/HomeStack/HomeStack';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -34,12 +35,12 @@ const App = () => {
     <NavigationContainer>
       {!user && 
       <Stack.Navigator>
-        <Stack.Screen name="Login" component={LoginRN} />
+        <Stack.Screen name="Login" component={LoginRN} options={{ headerShown: false }} />
         <Stack.Screen name="CreateUser" component={CreateUser} />
       </Stack.Navigator>
      }
       {user &&
-      <Tab.Navigator>
+      <Tab.Navigator initialRouteName='HomeStack'>
       <Tab.Screen name='WishList' component={WhishList} 
           options={{
             tabBarIcon: ({ color, size }) => 
@@ -52,10 +53,11 @@ const App = () => {
             (<MaterialCommunityIcons name="cart" color={color} size={size} />)
           }}
         />
-        <Tab.Screen name='Home' component={Home} 
+        <Tab.Screen name='HomeStack' component={HomeStack} 
           options={{
             tabBarIcon: ({ color, size }) => 
-            (<MaterialCommunityIcons name="home" color={color} size={size} />)
+            (<MaterialCommunityIcons name="home" color={color} size={size} />),
+            headerShown: false,
             }}
         />
         <Tab.Screen name='MyStore' component={MyStore} 
