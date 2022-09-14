@@ -11,7 +11,9 @@ export default function ProductCard({item}) {
   let dispatch = useDispatch();
   let cart = useSelector(state => state.cart);
   let foundCart = false;
-  cart.forEach( e =>{ if ( e === item.id ) {foundCart = true}});
+  if (cart) {
+    cart.forEach( e =>{ if ( e === item.id ) {foundCart = true}});
+  }
 
   const handleClick = (e) => {
     dispatch(removeFromCart(item.id));
