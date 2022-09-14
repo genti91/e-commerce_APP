@@ -1,5 +1,6 @@
 import axios from "axios";
-const {REACT_APP_URL} = process.env;
+//const {REACT_APP_URL} = process.env;
+const REACT_APP_URL = 'http://10.0.2.2:3001/'
 export async function postUsers({username, password}){
     var options = {
         method: 'POST',
