@@ -36,8 +36,10 @@ export default function ShoppingCart() {
     if (fg.length > 0) {
         filterGames.push(fg[0])
     }
-    ))
   }
+  ))
+
+
   let total = 0;
   if (filterGames){
     filterGames.forEach(e => total+=e.price)
