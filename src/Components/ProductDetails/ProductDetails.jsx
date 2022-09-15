@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, FlatList, Image, Dimensions, TouchableHighlight } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, addWish } from '../../redux/actions';
-const REACT_APP_URL = 'http://10.0.2.2:3001/'
+// const REACT_APP_URL = 'http://10.0.2.2:3001/'
+const {REACT_APP_URL} = process.env;
 
 const {width} = Dimensions.get('window');
 const SPACING = 5;
