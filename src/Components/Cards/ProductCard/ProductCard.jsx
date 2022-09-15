@@ -14,23 +14,33 @@ export default function ProductCard({item}) {
   if (cart) {
     cart.forEach( e =>{ if ( e === item.id ) {foundCart = true}});
   }
-
+  console.log(item)
   const handleClick = (e) => {
     dispatch(removeFromCart(item.id));
   }
+  let genres="";
+  item && item.genres.forEach(e=> genres = genres + e.name + " ");
+  let disabled = item.fromApi;
+
 
   return (
     <TouchableOpacity 
+      disabled = {disabled === true ? true: false}
 			style={styles.container}
 			onPress={() => navigation.navigate('Detail', {...item})}
 	  > 
-      <View>
-			<Image 
-				style={styles.image}
-                source={{uri: item.background_image}}
-                resizeMode={'cover'}
-			/>
-      <Text style={styles.text}>{item.name}</Text>
+      <View style={styles.box}>
+        <View>
+            <Image 
+              style={styles.image}
+                      source={{uri: item.background_image}}
+                      resizeMode={'cover'}
+            />
+        <Text style={styles.text}>{item.name}</Text>
+        </View>
+        <View style={{alignSelf: "flex-end"}}>
+          <Text>{genres}</Text>
+        </View>
       </View>
       {foundCart && route.name !== 'Home' && <TouchableHighlight
             style={styles.button}
@@ -48,7 +58,11 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         width: '100%',
         height: 100,
-        flexDirection: "row",
+        // flexDirection: "row",
+    },
+    box:{
+      flex: 1,
+      flexDirection: "row"
     },
     image: {
         height: 60,
@@ -57,7 +71,8 @@ const styles = StyleSheet.create({
         marginLeft: 10
     },
     text: {
-        marginLeft: 5
+        marginTop: 5,
+        marginLeft: 10
     },
     button: {
       alignSelf: 'flex-end'
