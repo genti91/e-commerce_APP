@@ -7,6 +7,7 @@ import { addToCart, addWish } from '../../redux/actions';
 const {REACT_APP_URL} = process.env;
 //const REACT_APP_URL = 'http://192.168.0.98:3001/'
 
+
 const {width} = Dimensions.get('window');
 const SPACING = 5;
 const ITEM_LENGTH = width; // Item is a square. Therefore, its height and width are of the same length.

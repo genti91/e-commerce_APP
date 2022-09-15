@@ -29,13 +29,12 @@ export default function ShoppingCart() {
     console.log('user: ', user)
   }, [cart])
 
-  if(cart){ 
-    (cart.forEach(LS => {
-      fg = games.filter(games => LS === games.id);
-      // console.log(fg)
-      if (fg.length > 0) {
-          filterGames.push(fg[0])
-      }
+
+  cart !== null && (cart.forEach(LS => {
+    fg = games.filter(games => LS === games.id);
+    // console.log(fg)
+    if (fg.length > 0) {
+        filterGames.push(fg[0])
     }
     ))
   }
