@@ -29,7 +29,8 @@ import { GET_ALL_PRODUCTS,
     FILTRED_PRICE,
     GET_USER_ORDERS,
     CLEAR_CART,
-    LOAD_CART
+    LOAD_CART,
+    LOAD_WISH_LIST
 
    } from "./actions.js";
 /* import { products } from "./products.js" */
@@ -185,6 +186,11 @@ switch(action.type){
            ...state,
            wishlist: [...state.wishlist, action.payload]
        }
+    case LOAD_WISH_LIST:
+        return{
+            ...state,
+            wishlist: action.payload
+        }
    case SET_CURRENT_PAGE:
        return{
            ...state,
