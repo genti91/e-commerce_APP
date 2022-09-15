@@ -1,6 +1,8 @@
 import axios from "axios";
 import { removeCart } from "./removeCart";
+import { removeWishList } from "./removeWishList";
 import { saveCart } from "./saveCart";
+import { saveWishList } from "./saveWishList";
 export const GET_ALL_PRODUCTS = "GET_ALL_PRODUCTS";
 export const FILTER_BY_GENRES = "FILTER_BY_GENRES";
 export const GET_GENRES = "GET_GENRES";
@@ -33,12 +35,12 @@ export const GET_USER_REPORTED_REVIEWS = "GET_USER_REPORTED_REVIEWS"
 export const GET_ALL_ORDERS = "GET_ALL_ORDERS"
 export const LOAD_CART = "LOAD_CART"
 export const PUT_USER = "PUT_USER";
-
+export const LOAD_WISH_LIST = "LOAD_WISH_LIST"
 export const FILTRED_PRICE = "FILTRED_PRICE"
 export const GET_USER_ORDERS = "GET_USER_ORDERS"
 
-//const {REACT_APP_URL} = process.env;
-const REACT_APP_URL = 'http://10.0.2.2:3001/'
+const {REACT_APP_URL} = process.env;
+//const REACT_APP_URL = 'http://192.168.0.98:3001/'
 
 export function getAllProducts(){
     return function(dispatch){
@@ -215,6 +217,7 @@ export function removeFromCart(id){
 }
 
 export function addWish(id){
+    saveWishList(id)
     return function(dispatch){
         dispatch({
             type: ADD_WISH,
@@ -312,6 +315,7 @@ export function resetUser(){
 };
 
 export function removeWish(id){
+    removeWishList(id);
     return{
         type: REMOVE_WISH,
         payload: id
@@ -456,6 +460,7 @@ export function priceFilter(payload) {
 }
 
 export function clearCart(){
+    saveCart(true, true);
     return{
         type: CLEAR_CART,
     };
@@ -468,3 +473,21 @@ export function loadCart(payload){
     };
 };
 
+export function loadWhishList(payload){
+    return{
+        type: LOAD_WISH_LIST,
+        payload
+    };
+};
+
+export function postOrder(payload){
+    return async function (dispatch){
+        try{
+            let json = await axios.post(`${REACT_APP_URL}order/post`, payload)
+            return json;
+        }catch(e){
+            console.error(e);
+        };
+    };
+
+};

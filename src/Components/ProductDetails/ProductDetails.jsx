@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, FlatList, Image, Dimensions, TouchableHighlight } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, addWish } from '../../redux/actions';
-const REACT_APP_URL = 'http://10.0.2.2:3001/'
+const {REACT_APP_URL} = process.env;
+//const REACT_APP_URL = 'http://192.168.0.98:3001/'
 
 const {width} = Dimensions.get('window');
 const SPACING = 5;
@@ -13,13 +14,21 @@ const BORDER_RADIUS = 20;
 
 export default function ProductDetails({route}) {
 
-  console.log(route.params.id)
+  console.log(route.params.name)
   let id = route.params.id
 
   const [game, setGame] = useState({});
   const [disabled, setDisabled] = useState(true); // si no esta logueado desabilita addwish
   let cart = useSelector(state=>state.cart);
+  let userOrders = useSelector(state=>state.userOrders);
+  let wishlist = useSelector(state=>state.wishlist);
   const [reviews, setReviews] = useState();
+  let owned = false;
+  let gam = userOrders.filter((e)=> e.game_id === id)
+  console.log('game: ',gam)
+  if (gam.length > 0) {
+    owned = true;
+  }
   
   let user = useSelector(state => state.users); // se trae el usuario logueado para permitir agregar a wishlist
   let dispatch = useDispatch();
@@ -43,10 +52,26 @@ export default function ProductDetails({route}) {
     if (cart) {
       fC = cart.filter(e=>e===id);
     }
-    if(fC && fC.length>0){
+    if (owned) {
+      alert("You already own this game!")
+    }else if(fC && fC.length>0){
     alert("Juego ya agregado al carrito anteriormente!")
     }else{
       dispatch(addToCart(game.id)) // dispacha al carrito de compras con el id del game en la db
+    }
+  }
+
+  function handleWhish(){
+    let fC;
+    if (wishlist) {
+      fC = wishlist.filter(e=>e===id);
+    }
+    if (owned) {
+      alert("You already own this game!")
+    }else if(fC && fC.length>0){
+    alert("Juego ya agregado al la whish list anteriormente!")
+    }else{
+      dispatch(addWish(game.id)) // dispacha al carrito de compras con el id del game en la db
     }
   }
 
@@ -77,7 +102,7 @@ export default function ProductDetails({route}) {
       </TouchableHighlight>
       <TouchableHighlight
           style={styles.button}
-          onPress={(e) => handleWhishList(e)}
+          onPress={(e) => handleWhish(e)}
       >
           <Text style={styles.textButton}>Add to WhishList</Text>
       </TouchableHighlight>

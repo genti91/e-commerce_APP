@@ -1,9 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-//const {REACT_APP_URL} = process.env;
-const REACT_APP_URL = 'http://10.0.2.2:3001/'
+const {REACT_APP_URL} = process.env;
+//const REACT_APP_URL = 'http://192.168.0.98:3001/'
+
 export async function postUsers({username, password}){
-    
     await AsyncStorage.setItem('password', password);
     await AsyncStorage.setItem('username', username);
 

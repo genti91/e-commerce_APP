@@ -8,9 +8,6 @@ export async function removeCart(id){
         let new_cart = cart.filter((e) => e !== id)
         console.log(new_cart)
         await AsyncStorage.setItem('cart', JSON.stringify(new_cart));
-
-        let new_cart_ = await AsyncStorage.getItem('cart');
-        //console.log('new cart: ', JSON.parse(new_cart_));
     }catch(err){
         console.log(err)
     }
