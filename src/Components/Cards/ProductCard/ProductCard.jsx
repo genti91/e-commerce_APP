@@ -3,7 +3,7 @@ import { Text, View,  Image, StyleSheet, TouchableOpacity, TouchableHighlight } 
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import MaterialCommunityIcons from 'react-native-vector-icons/Ionicons';
-import { removeFromCart } from '../../../redux/actions';
+import { removeFromCart, removeWish } from '../../../redux/actions';
 
 export default function ProductCard({item}) {
 	const navigation = useNavigation();
@@ -16,7 +16,12 @@ export default function ProductCard({item}) {
   }
 
   const handleClick = (e) => {
-    dispatch(removeFromCart(item.id));
+    if (route.name === 'Cart') {
+      dispatch(removeFromCart(item.id));
+    }else{
+      dispatch(removeWish(item.id))
+    }
+    
   }
 
   return (
@@ -32,7 +37,7 @@ export default function ProductCard({item}) {
 			/>
       <Text style={styles.text}>{item.name}</Text>
       </View>
-      {foundCart && route.name !== 'Home' && <TouchableHighlight
+      {route.name !== 'Home' && route.name !== 'MyStore' && <TouchableHighlight
             style={styles.button}
             onPress={(e) => handleClick(e)}
         >
