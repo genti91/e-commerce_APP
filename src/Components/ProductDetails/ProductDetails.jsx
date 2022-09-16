@@ -14,10 +14,7 @@ const ITEM_LENGTH = width; // Item is a square. Therefore, its height and width 
 const BORDER_RADIUS = 20;
 
 export default function ProductDetails({route}) {
-
-  console.log(route.params.name)
   let id = route.params.id
-
   const [game, setGame] = useState({});
   const [disabled, setDisabled] = useState(true); // si no esta logueado desabilita addwish
   let cart = useSelector(state=>state.cart);
@@ -26,7 +23,6 @@ export default function ProductDetails({route}) {
   const [reviews, setReviews] = useState();
   let owned = false;
   let gam = userOrders.filter((e)=> e.game_id === id)
-  console.log('game: ',gam)
   if (gam.length > 0) {
     owned = true;
   }

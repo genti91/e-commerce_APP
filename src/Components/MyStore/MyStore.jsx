@@ -26,12 +26,12 @@ export default function MyStore() {
       }
     }
     )
-    console.log(filterGames)
   }
 
   return (
     <View>
       <FlatList
+        style={styles.list}
         data={filterGames}
         keyExtractor={({ id }) => id.toString()}
         renderItem={({ item }) => 
@@ -45,3 +45,11 @@ export default function MyStore() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  list: {
+    paddingTop: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+  }
+});

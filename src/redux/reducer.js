@@ -113,8 +113,6 @@ switch(action.type){
                return true;
            }else{return false}
        });
-       
-       console.log(state.searchered)
 
        let filtered_searchered = state.searchered.filter((e) => {
         var arr = e.genres && e.genres.map(e => {
@@ -122,7 +120,6 @@ switch(action.type){
                 return true;
             }else{return false}
         });
-        console.log(arr)
         if (arr.includes(true)) {
             return true;
         }else{return false}
@@ -251,7 +248,6 @@ switch(action.type){
                    searchered: [...ratSerch]
        };
        case Order_By:
-           console.log(action.payload)
            return{
                ...state,
                products:[...state.products].sort(action.payload),

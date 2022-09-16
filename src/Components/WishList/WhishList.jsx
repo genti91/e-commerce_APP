@@ -27,7 +27,6 @@ export default function WhishList() {
 
   if(wishlist){(wishlist.forEach(LS => {
       fg = games.filter(games => LS === games.id);
-      // console.log(fg)
       if (fg.length > 0) {
           filterGames.push(fg[0])
       }
@@ -39,6 +38,7 @@ export default function WhishList() {
   return (
     <View>
       <FlatList
+        style={styles.list}
         data={filterGames}
         keyExtractor={({ id }) => id.toString()}
         renderItem={({ item }) => 
@@ -52,3 +52,11 @@ export default function WhishList() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  list: {
+    paddingTop: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+  }
+})

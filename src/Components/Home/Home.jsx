@@ -19,7 +19,8 @@ export default function Home() {
   let [gamesPerPage, setgamesPerPage] = useState(15);
   const indexOfLastGame = currentPage * gamesPerPage;
   const indexOfFirstGame = indexOfLastGame - gamesPerPage;
-  const currentGames = searchered.length ? searchered.slice(indexOfFirstGame, indexOfLastGame) : games.slice(indexOfFirstGame, indexOfLastGame);
+  //const currentGames = searchered.length ? searchered.slice(indexOfFirstGame, indexOfLastGame) : games.slice(indexOfFirstGame, indexOfLastGame);
+  const currentGames = searchered.length ? searchered : games
   const data = [
     {id: 1, name: "Price: Higher to lower", value: 'higher'}, 
     {id: 2, name: "Price: Lower to Higher", value: 'lower'},
@@ -29,8 +30,6 @@ export default function Home() {
     {id: 6, name: "Z-A", value: 'Z-A'},
 
 ]
-
-  
 
   //const user = useSelector((state) => state.users),
       //wishList = useSelector(state => state.wishlist),
@@ -78,8 +77,9 @@ export default function Home() {
   return (
     <View>
         
-      <View>
+      <View style={styles.container}>
           <Searchbar
+              style={{marginTop:5}}
               placeholder="Search for character..."
               onChangeText={value => handleChange(value)}
               value={name}
@@ -95,13 +95,17 @@ export default function Home() {
           />
 
           <FlatList
-                style={{marginBottom:100}}
-                data={currentGames}
-                keyExtractor={({ id }) => id.toString()}
-                renderItem={({ item }) => 
+              style={{marginBottom:100, marginTop: 5}}
+              showsVerticalScrollIndicator={false}
+              data={currentGames}
+              keyExtractor={({ id }) => id.toString()}
+              initialNumToRender={20}
+              maxToRenderPerBatch={20}
+              decelerationRate={0.02}
+              renderItem={({ item }) => 
               (
                   <ProductCard 
-                      id={item.id}
+                      key={item.id}
                       item={item}                           
                   />
               )}
@@ -111,3 +115,10 @@ export default function Home() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+      paddingRight: 10,
+      paddingLeft: 10,
+  }
+});
