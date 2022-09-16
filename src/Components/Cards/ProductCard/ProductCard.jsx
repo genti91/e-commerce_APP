@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
       marginLeft: 40,
     },
     textContainer: {
-      width: 200,
+      maxWidth: 200,
     },
     iconContainer: {
       paddingLeft: 10,

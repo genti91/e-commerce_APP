@@ -100,8 +100,8 @@ export default function Home() {
               showsVerticalScrollIndicator={false}
               data={currentGames}
               keyExtractor={({ id }) => id.toString()}
-              initialNumToRender={20}
-              maxToRenderPerBatch={20}
+              initialNumToRender={8}
+              maxToRenderPerBatch={8}
               decelerationRate={0.02}
               renderItem={({ item }) => 
               (
