@@ -137,7 +137,14 @@ export default function Order({
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 2,
-        shadowColor: "#000"
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
      }
  })
 
