@@ -42,10 +42,8 @@ export default function LoginRN() {
   }
 
   async function handleSubmit(e) {
-    console.log('user: ', user)
     try{
     const userExist = await findEmail(user.username);
-    console.log('userExist: ', userExist)
     if (userExist.user === null) {
       setUserGet((i) => ({ ...i, userNExists: true }));
     } 
@@ -54,14 +52,10 @@ export default function LoginRN() {
     // } else if (!userExist.isVerified) {
     //   setUserGet((i) => ({ ...i, isVerified: true }));
     } else {
-        try{
-            const info = await postUsers(user);
-            console.log('info: ', info)
-            info.message?.search('login') && setUserGet((i) => ({ ...i, failedLog: true }));
-            info.token && dispatch(getUsers(info.token)) && window.sessionStorage.setItem('token', info.token);
-        }catch(err){
-            console.log("err postUsers: ", err)
-        }
+      const info = await postUsers(user);
+      info.message?.search('login') && setUserGet((i) => ({ ...i, failedLog: true }));
+      info.token && dispatch(getUsers(info.token)) && window.sessionStorage.setItem('token', info.token);
+        
     }
     }catch(err){
         console.log(err)

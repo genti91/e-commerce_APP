@@ -299,7 +299,6 @@ export function Edit_Game(payload){
     return async function (dispatch){
         try{
             let json = await axios.put(`${REACT_APP_URL}videogames/edit`, payload)
-            console.log(json)
             return json;
         }catch(e){
             console.error(e);
@@ -367,9 +366,7 @@ export function PostReview(payload){
     return async function (dispatch){
         try{
             let json = await axios.post(`${REACT_APP_URL}reviews`, payload)
-            console.log(json)
             return json;
-
         }catch(e){
             console.error(e);
             alert(e.message)
