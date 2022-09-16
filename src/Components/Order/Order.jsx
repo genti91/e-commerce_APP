@@ -10,19 +10,20 @@ import imagesPath from '../../constants/imagesPath.js';
 
 
 export default function Order({
-    data,
-    value,
-    onSelect = () => {
+    data = [],
+    value = {},
+    onSelect = () => {}
+}) 
 
-    }
-}) {
-   
+{
+
+    const dispatch = useDispatch()
     const [showOptions, setShowOptiones] = useState(false)
 
     const onSelectItem = (val) => {
-        console.log(val.name)
         setShowOptiones(!showOptions)
         onSelect(val)
+        
         switch(val.value){
                 case  "A-Z":
                 dispatch(Orderby((a, b) => { return a.name.toUpperCase() < b.name.toUpperCase() ? -1 : 1 })); break //si es menor -1
@@ -55,7 +56,7 @@ export default function Order({
        
     }
 
-    const dispatch = useDispatch()
+   
     
     let handlerChange = (e)=>{
         e.preventDefault()
@@ -64,54 +65,55 @@ export default function Order({
     };
     
     return (
-        <View>
+        <View style={styles.containter}>
             <TouchableOpacity 
                 style={styles.dropDownStyle}
                 activeOpacity={0.8}
                 onPress={() => setShowOptiones(!showOptions)}
             >
-                <Text>{!!value? value?.name: "Choose an option"}</Text>
-               <Image style={{transform: [{rotate: showOptions? '180deg' : '0deg'}]}} source={imagesPath.icDropDown}></Image> 
+                <Text style={{
+                    color: 'grey',
+                    fontSize: 17
+                }}>Order by...</Text>
+                <Image style={{
+                    transform: [{rotate: showOptions? '180deg' : '0deg'}]
+                    }} source={imagesPath.icDropDown}></Image> 
             </TouchableOpacity>
-
-           {showOptions && <View
+           {showOptions && (<View
                 style={{
-                    backgroundColor: 'grey',
+                    backgroundColor: '#03989E',
                     padding: 8,
                     borderRadius: 6,
-                    maxHeight: 120
-
-                }}
-           >
-
+                    maxHeight: 120,
+                    shadowColor: "#000"
+                }}>
             <ScrollView
                 keyboardShouldPersistTaps='handled'
                 showsVerticalScrollIndicator={false}
                 >
+            <TouchableOpacity>
             {data.map((val, i) => {
                 return (
                     <TouchableOpacity 
                         key={String(i)}
                         onPress={() => onSelectItem(val)}
                         style={{
-                            backgroundColor: value.id == val.id ? '#999894': "white",
+                            backgroundColor: '#FFFFFF',
                             paddingVertical: 8,
                             borderRadius: 4,
                             paddingHorizontal: 4,
-                            marginBottom: 4
-
+                            marginBottom: 4,
+                            textDecorationColor: '#FFFFFF',
+                            shadowColor: "#000"
                         }}
                         >
                         <Text>{val.name}</Text>
                     </TouchableOpacity>
                 )
-                
-
             })}
+            </TouchableOpacity>
             </ScrollView>
-            </View>}
-
-
+            </View>)}
         </View>
   )
   
@@ -119,22 +121,23 @@ export default function Order({
 
  const styles = StyleSheet.create({
      containter: {
-         backgroundColor: '#03989E',
-         textDecorationColor: '#03989E'
+        textDecorationColor: '#FFFFFF',
+        shadowColor: "#000"
      },
 
      dropDownStyle: {
-        backgroundColor: 'rgba(0,0,0,0.2)',
+        shadowColor: '#000',
+        shadowRadius: 3,
+        marginTop: 3,
+        backgroundColor: 'white',
         padding: 8,
         borderRadius: 6,
         minHeight: 42,
-      /*   justifyContent: 'center', */
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 2,
-        
-        
+        shadowColor: "#000"
      }
  })
 

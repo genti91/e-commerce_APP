@@ -22,10 +22,10 @@ export default function Home() {
   //const currentGames = searchered.length ? searchered.slice(indexOfFirstGame, indexOfLastGame) : games.slice(indexOfFirstGame, indexOfLastGame);
   const currentGames = searchered.length ? searchered : games
   const data = [
-    {id: 1, name: "Price: Higher to lower", value: 'higher'}, 
-    {id: 2, name: "Price: Lower to Higher", value: 'lower'},
-    {id: 3, name: "Rating: Higher to lower", value: 'Highest_Price'},
-    {id: 4, name: "Rating: Lower to Higher", value: 'Lowest_Price'},
+    {id: 1, name: "Price: Higher to lower", value: 'Highest_Price'}, 
+    {id: 2, name: "Price: Lower to Higher", value: 'Lowest_Price'},
+    {id: 3, name: "Rating: Higher to lower", value: 'higher'},
+    {id: 4, name: "Rating: Lower to Higher", value: 'lower'},
     {id: 5, name: "A-Z", value: 'A-Z'},
     {id: 6, name: "Z-A", value: 'Z-A'},
 
@@ -88,6 +88,7 @@ export default function Home() {
           />
 
           <Order
+            style={{shadowColor: "grey"}}
             value={selectedIte}
             data={data}
             onSelect={onSelect}
