@@ -1,29 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, View, Image, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/Ionicons';
 import LoginRN from './src/Components/Login/LoginRN';
-import Home from './src/Components/Home/Home';
-import ShoppingCart from './src/Components/ShoppingCart/ShoppingCart';
-import { color } from 'react-native-reanimated';
 import WhishList from './src/Components/WishList/WhishList';
 import MyStore from './src/Components/MyStore/MyStore';
-import { Provider, useSelector } from 'react-redux';
+import { Provider, useSelector, useDispatch } from 'react-redux';
 import store from './src/redux/store';
-import { Text, View, Image, StyleSheet } from 'react-native';
 import CreateUser from './src/Components/CreateUser/CreateUser';
 import HomeStack from './src/Components/HomeStack/HomeStack';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loadUser } from './src/Components/Login/LoadUser';
-import { useDispatch } from 'react-redux';
-import { getUsers, loadCart } from './src/redux/actions';
+import { getUserOrders, getUsers, loadCart, loadWhishList } from './src/redux/actions';
 import UserProfile from './src/Components/UserProfile/UserProfile';
 import { loadCartStorage } from './src/Components/ShoppingCart/loadCartStorage';
+import { loadWhishListStorage } from './src/Components/WishList/loadWhishListStorage';
+import ShoppingCart from './src/Components/ShoppingCart/ShoppingCart';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+const {REACT_APP_URL} = process.env;
+//const REACT_APP_URL = 'http://192.168.0.98:3001/'
 
 const AppWrapper = () => {
   return (
@@ -44,6 +42,9 @@ const App = () => {
       loadCartStorage().then((cart) => {
         dispatch(loadCart(cart));
       })
+      loadWhishListStorage().then((wishList) => {
+        dispatch(loadWhishList(wishList));
+      })
       setTimeout(() => {
         setLoading(false);
       }, 2000);
@@ -51,6 +52,9 @@ const App = () => {
   }, []);
 
   let {user} = useSelector(state=>state.users);
+  if(user){
+    dispatch(getUserOrders(user.id));
+  }
 
   return (
     <View style={{height: '100%'}}>

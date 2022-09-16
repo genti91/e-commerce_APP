@@ -1,35 +1,28 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux";
-import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Alert, TouchableHighlight, Modal } from 'react-native';
 import ProductCard from '../Cards/ProductCard/ProductCard';
-import { addToCart, getAllProducts } from "../../redux/actions";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-// const REACT_APP_URL = 'http://10.0.2.2:3001/'
+import { addToCart, clearCart, getAllProducts, getUserOrders, postOrder } from "../../redux/actions";
+import { useNavigation } from '@react-navigation/native';
+import WebView from "react-native-webview";
+import { removeCart } from '../../redux/removeCart';
+import axios from 'axios';
+import { saveCart } from '../../redux/saveCart';
 const {REACT_APP_URL} = process.env;
+//const REACT_APP_URL = 'http://192.168.0.98:3001/'
 
 export default function ShoppingCart() {
   let cart = useSelector(state => state.cart);
   let games = useSelector(state => state.products2);
-  let users = useSelector(state => state.users);
+  let {user} = useSelector(state => state.users);
   let filterGames = [];
-  let [cartLS, setCartLS] = useState([]);
   let fg;
-  let gamesCO;
-  let forCheckout;
   let dispatch = useDispatch();
-//const username = await AsyncStorage.getItem('username');
-//await AsyncStorage.setItem('password', password);
+  const navigation = useNavigation();
+  //onPress={() => navigation.navigate('Detail', {...item})}
+
   useEffect( () => {
     dispatch(getAllProducts())
-    // let cartLS2 = await JSON.parse(await AsyncStorage.getItem('username'));
-    // await AsyncStorage.setItem('cart',JSON.stringify(cart));
-    // if (cart.length < 1 && cartLS2 !== null) {
-    //    console.log(cartLS2)
-    //    cartLS2.forEach(e => dispatch(addToCart(e)));
-    // }
-    // if (cartLS2) {
-    //    setCartLS(cartLS2)
-    // }
   }, [dispatch])
 
   useEffect(() => {
@@ -39,71 +32,44 @@ export default function ShoppingCart() {
 
   cart !== null && (cart.forEach(LS => {
     fg = games.filter(games => LS === games.id);
-    // console.log(fg)
     if (fg.length > 0) {
         filterGames.push(fg[0])
     }
   }
   ))
 
-  //arreglo vacio. 
-  // if (!cartLS && cart.length > 0) {
-  //     console.log('cart: ', cart)
-  //     cart.forEach(e => {
-  //         fg = games.filter((f) => e === f.id)
-  //         filterGames.push(fg[0])
-  //     })
-  // }
 
+  let total = 0;
+  if (filterGames){
+    filterGames.forEach(e => total+=e.price)
+  }
 
-  if (filterGames.length > 0) {
-      gamesCO = filterGames.map(e => {
-          return {
-              title: e.name,
-              unit_price: e.price,
-              quantity: 1
-          }
-      })
-      forCheckout = {
-          items: gamesCO,
-          back_urls: {
-              "success": "http://localhost:8080/feedback",
-              "failure": "http://localhost:8080/feedback",
-              "pending": "http://localhost:8080/feedback"
-          },
-          auto_return: "approved",
-  };
+  const [state, setState] = useState({showModal: false, status: "Pending"});
 
-
-
-
-  let string_user_id;
-    if(users.user){
-        string_user_id = JSON.stringify(users.user.id)
-        string_user_id = string_user_id + "/"
-        const carro = cart.map(e => e).join('*')
-        string_user_id = string_user_id + carro
+  function handleResponse(data){
+    if (data.title === "success") {
+        setState({ showModal: false, status: "Complete" });
+        filterGames.forEach(async (e) => {
+          //dispatch(postOrder({game_id: e.id, game_name: e.name, price: e.price, user_id: user.id, username: user.username, mercadopago_id: user.id}))
+          await axios.post(`${REACT_APP_URL}order/post`, {game_id: e.id, game_name: e.name, price: e.price, user_id: user.id, username: user.username, mercadopago_id: user.id})
+        })
+        dispatch(clearCart())
+        dispatch(getUserOrders(user.id))
+        alert('Successful purchase, your games will be added to your library')
+    } else if (data.title === "cancel") {
+        setState({ showModal: false, status: "Cancelled" });
+    } else {
+        return;
     }
-
-
-
-    forCheckout = {
-        items: gamesCO,
-        external_reference: `${users.user?string_user_id:null}`, //el id de cada orden
-        back_urls: {
-            "success": `${process.env.REACT_APP_URL}cart/feedback`,
-            "failure": `${process.env.REACT_APP_URL}cart/feedback`, //cambiar a mensaje de error
-            "pending": `${process.env.REACT_APP_URL}cart/feedback` //x2
-        },
-        auto_return: "approved",
-    };
   };
-
 
   return (
-    <View>
-      <Text>My shopping cart</Text>
+    <View style={styles.container}>
+
+      {!cart || cart.length === 0 ? <Text style={styles.noProducts}>No products yet...</Text> : null}
+
       <FlatList
+        style={styles.list}
         data={filterGames}
         keyExtractor={({ id }) => id.toString()}
         renderItem={({ item }) => 
@@ -114,6 +80,79 @@ export default function ShoppingCart() {
           />
         )}
       />
+
+      <Modal
+          visible={state.showModal}
+          onRequestClose={() => setState({ showModal: false })}
+      >
+          <WebView
+              source={{ uri: `${REACT_APP_URL}paypal/rend` }}
+              onNavigationStateChange={data =>
+                  handleResponse(data)
+              }
+              injectedJavaScript={`document.f1.submit()`}
+          />
+      </Modal>
+
+      <View style={styles.bottom}>
+      <Text style={styles.total}>Total: {total} USD$</Text>
+      <TouchableHighlight
+          style={styles.button}
+          onPress={() => setState({ showModal: true })}
+      >
+          <Text style={styles.textButton}>Purchase</Text>
+      </TouchableHighlight>
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+      height: '100%',
+      width: '100%',
+  },
+  button : {
+    position: 'absolute',
+    bottom:0,
+    right:0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: 'black',
+    marginTop:5,
+    marginRight: 20,
+    marginBottom: 10,
+    width:160
+  },
+  textButton: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'white',
+  },
+  total: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginLeft: 20,
+    marginTop: 25,
+    height: 40
+  },
+  bottom:{
+    backgroundColor: '#e9e7e9'
+  },
+  noProducts: {
+    marginTop: 70,
+    textAlign: 'center',
+    fontSize: 20
+  },
+  list: {
+    paddingTop: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+  }
+})

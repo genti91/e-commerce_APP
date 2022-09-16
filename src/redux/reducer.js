@@ -29,7 +29,8 @@ import { GET_ALL_PRODUCTS,
     FILTRED_PRICE,
     GET_USER_ORDERS,
     CLEAR_CART,
-    LOAD_CART
+    LOAD_CART,
+    LOAD_WISH_LIST
 
    } from "./actions.js";
 /* import { products } from "./products.js" */
@@ -112,8 +113,6 @@ switch(action.type){
                return true;
            }else{return false}
        });
-       
-       console.log(state.searchered)
 
        let filtered_searchered = state.searchered.filter((e) => {
         var arr = e.genres && e.genres.map(e => {
@@ -121,7 +120,6 @@ switch(action.type){
                 return true;
             }else{return false}
         });
-        console.log(arr)
         if (arr.includes(true)) {
             return true;
         }else{return false}
@@ -185,6 +183,11 @@ switch(action.type){
            ...state,
            wishlist: [...state.wishlist, action.payload]
        }
+    case LOAD_WISH_LIST:
+        return{
+            ...state,
+            wishlist: action.payload
+        }
    case SET_CURRENT_PAGE:
        return{
            ...state,
@@ -245,7 +248,6 @@ switch(action.type){
                    searchered: [...ratSerch]
        };
        case Order_By:
-           console.log(action.payload)
            return{
                ...state,
                products:[...state.products].sort(action.payload),
