@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, Dimensions, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Image, Dimensions, TouchableHighlight, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, addWish } from '../../redux/actions';
 import { Box, useToast } from "native-base";
-
+import ReviewCard from '../Cards/Reviews/ReviewCard';
 const {REACT_APP_URL} = process.env;
 //const REACT_APP_URL = 'http://192.168.0.98:3001/'
 
@@ -114,7 +114,7 @@ export default function ProductDetails({route}) {
   }
 
   return (
-    <View>
+    <ScrollView>
       <Text style={styles.name}>{route.params.name}</Text>
       <FlatList
       contentContainerStyle={{alignItems: 'center'}}
@@ -145,7 +145,12 @@ export default function ProductDetails({route}) {
           <Text style={styles.textButton}>Add to WhishList</Text>
       </TouchableHighlight>
       </View>
-    </View>
+      <View className='verticalScrollable1'>
+        {reviews && reviews.map((e) => {
+          return(<ReviewCard></ReviewCard>)
+        })}
+      </View>
+    </ScrollView>
   );
 }
 
