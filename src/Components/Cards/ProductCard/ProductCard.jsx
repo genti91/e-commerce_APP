@@ -79,14 +79,16 @@ export default function ProductCard({item}) {
       dispatch(addWish(item.id)) // dispacha al carrito de compras con el id del game en la db
     }
   }
-  let platformsSet = new Set();
-  item.platforms.forEach(e => {
-    if (e.name.includes('PlayStation')) platformsSet.add('PlayStation.png');
-    if (e.name.includes('Xbox')) platformsSet.add('Xbox.png');
-    if (e.name === 'PC') platformsSet.add('PC.png');
-  });
   let platformsArr = []
-  platformsSet.forEach(e => platformsArr.push(e))
+  if (item.platforms && item.platforms.length > 0) {
+    let platformsSet = new Set();
+    item.platforms.forEach(e => {
+      if (e.name.includes('PlayStation')) platformsSet.add('PlayStation');
+      if (e.name.includes('Xbox')) platformsSet.add('Xbox');
+      if (e.name === 'PC') platformsSet.add('PC');
+    });
+    platformsSet.forEach(e => platformsArr.push(e))
+  }
 
   return (
     <TouchableOpacity 
@@ -102,21 +104,24 @@ export default function ProductCard({item}) {
       <View>
       <View style={styles.textContainer}><Text numberOfLines={1} style={styles.text}>{item.name}</Text></View>
       
+      {item.platforms && item.platforms.length > 0 && (
       <View style={{flexDirection: "row"}}>
       <Text style={styles.platforms} >Available on:</Text>
         {platformsArr.map((e, i) => {
-          let img_url = '../../../images/PC.png'
-          //console.log(img_url)
+          let img;
+          if(e === 'PC') img = require('../../../images/PC.png')
+          if(e === 'Xbox') img = require('../../../images/Xbox.png')
+          if(e === 'PlayStation') img = require('../../../images/PlayStation.png')
           return(
             <Image 
               key={i}
               style={styles.iconImg}
-              source={require(img_url)}
+              source={img}
               resizeMode={'cover'}
             />
           )
         })}
-      </View>
+      </View>)}
       {route.name !== 'MyStore' ? 
       <View>
         <View style={styles.iconContainer}> 

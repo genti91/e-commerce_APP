@@ -20,7 +20,6 @@ export default function Order({
     const [showOptions, setShowOptiones] = useState(false)
 
     const onSelectItem = (val) => {
-        console.log(val.name)
         setShowOptiones(!showOptions)
         onSelect(val)
         switch(val.value){
