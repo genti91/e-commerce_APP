@@ -32,6 +32,7 @@ export default function Home() {
   useEffect(() => {
       //token && dispatch(getUsers(token));
       dispatch(getAllProducts());
+      console.log(games)
   }, []);
 
   // useEffect(() => {

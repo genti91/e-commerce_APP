@@ -8,10 +8,11 @@ import { postUsers } from "./LoginHelper";
 import { findEmail } from "../CreateUser/CreateUserHelper";
 import { useSelector } from "react-redux";
 import { getUsers } from "../../redux/actions";
+import { useNavigation } from '@react-navigation/native';
 const { REACT_APP_URL } = process.env;
 
 export default function LoginRN() {
-
+  const navigation = useNavigation();
     const [user, setUser] = useState({ username: "", password: "" }),
     [userGet, setUserGet] = useState({ userNExists: false, failedLog: false, userBan: false, isVerified: false }),
     [disabled, setDisabled] = useState(true),
@@ -39,6 +40,7 @@ export default function LoginRN() {
     setUser({ ...user, ['password']: e })
     setUserGet((i) => ({ ...i, failedLog: false }))
   }
+
 
   async function handleSubmit(e) {
     console.log('user: ', user)
@@ -92,9 +94,15 @@ export default function LoginRN() {
         />
         <TouchableHighlight
             style={styles.button}
-            onPress={(e) => handleSubmit(e)}
-        >
-            <Text style={styles.textButton}>Login</Text>
+            onPress={(e) => handleSubmit(e)}>
+                <Text style={styles.textButton}>Login</Text>
+        </TouchableHighlight>
+        <TouchableHighlight
+            style={styles.button}
+            onPress={() => navigation.navigate('CreateUser')}>
+              <View>
+                <Text style={styles.textButton}>Create an account</Text>
+              </View>
         </TouchableHighlight>
     </View>
   );
@@ -112,7 +120,8 @@ const styles = StyleSheet.create({
     button : {
         backgroundColor : 'skyblue',
         paddingTop : 15 ,
-        paddingBottom : 15
+        paddingBottom : 15,
+        margin: 10
     },
     textButton: {
         textAlign: 'center',
