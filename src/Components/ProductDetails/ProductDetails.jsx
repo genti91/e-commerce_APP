@@ -1,9 +1,11 @@
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, Dimensions, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Image, Dimensions, TouchableHighlight, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, addWish } from '../../redux/actions';
+import { Box, useToast } from "native-base";
+import ReviewCard from '../Cards/Reviews/ReviewCard';
 const {REACT_APP_URL} = process.env;
 //const REACT_APP_URL = 'http://192.168.0.98:3001/'
 
@@ -26,6 +28,7 @@ export default function ProductDetails({route}) {
   if (gam.length > 0) {
     owned = true;
   }
+  const toast = useToast();
   
   let user = useSelector(state => state.users); // se trae el usuario logueado para permitir agregar a wishlist
   let dispatch = useDispatch();
@@ -50,11 +53,30 @@ export default function ProductDetails({route}) {
       fC = cart.filter(e=>e===id);
     }
     if (owned) {
-      alert("You already own this game!")
+      toast.show({
+        render: () => {
+          return <Box bg="yellow.500" px="2" py="1" rounded="sm" mb={5}>
+                  You already own this game!
+                </Box>;
+        }
+      })
     }else if(fC && fC.length>0){
-    alert("Juego ya agregado al carrito anteriormente!")
+    toast.show({
+      render: () => {
+        return <Box bg="red.500" px="2" py="1" rounded="sm" mb={5}>
+                Game already in cart!
+              </Box>;
+      }
+    })
     }else{
       dispatch(addToCart(game.id)) // dispacha al carrito de compras con el id del game en la db
+      toast.show({
+        render: () => {
+          return <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
+                  Game added to cart!
+                </Box>;
+        }
+      })
     }
   }
 
@@ -64,16 +86,35 @@ export default function ProductDetails({route}) {
       fC = wishlist.filter(e=>e===id);
     }
     if (owned) {
-      alert("You already own this game!")
+      toast.show({
+        render: () => {
+          return <Box bg="yellow.500" px="2" py="1" rounded="sm" mb={5}>
+                  You already own this game!
+                </Box>;
+        }
+      })
     }else if(fC && fC.length>0){
-    alert("Juego ya agregado al la whish list anteriormente!")
+      toast.show({
+        render: () => {
+          return <Box bg="red.500" px="2" py="1" rounded="sm" mb={5}>
+                  Game already in wishlist!
+                </Box>;
+        }
+      })
     }else{
       dispatch(addWish(game.id)) // dispacha al carrito de compras con el id del game en la db
+      toast.show({
+        render: () => {
+          return <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
+                  Game added to wishlist!
+                </Box>;
+        }
+      })
     }
   }
 
   return (
-    <View>
+    <ScrollView>
       <Text style={styles.name}>{route.params.name}</Text>
       <FlatList
       contentContainerStyle={{alignItems: 'center'}}
@@ -104,7 +145,12 @@ export default function ProductDetails({route}) {
           <Text style={styles.textButton}>Add to WhishList</Text>
       </TouchableHighlight>
       </View>
-    </View>
+      <View className='verticalScrollable1'>
+        {reviews && reviews.map((e) => {
+          return(<ReviewCard></ReviewCard>)
+        })}
+      </View>
+    </ScrollView>
   );
 }
 
