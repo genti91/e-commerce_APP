@@ -98,6 +98,7 @@ export default function Order({
                         key={String(i)}
                         onPress={() => onSelectItem(val)}
                         style={{
+                            // backgroundColor: value.id == val.id ? '#999894': "white",
                             backgroundColor: '#FFFFFF',
                             paddingVertical: 8,
                             borderRadius: 4,
