@@ -47,6 +47,10 @@ export default function ProductCard({item}) {
   if (foundWish) {
     wishColor = '#ad5049'
   }
+  let genres="";
+  item && item.genres.forEach(e=> genres = genres + e.name + " ");
+  let disabled = item.fromApi;
+
 
   function handleCart(){
     let fC;
