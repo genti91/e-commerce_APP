@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, addWish } from '../../redux/actions';
 import { Box, useToast } from "native-base";
 import ReviewCard from '../Cards/Reviews/ReviewCard';
+import ReadMore from 'react-native-read-more-text';
 const {REACT_APP_URL} = process.env;
 //const REACT_APP_URL = 'http://192.168.0.98:3001/'
 
@@ -13,7 +14,7 @@ const {REACT_APP_URL} = process.env;
 const {width} = Dimensions.get('window');
 const SPACING = 5;
 const ITEM_LENGTH = width; // Item is a square. Therefore, its height and width are of the same length.
-const BORDER_RADIUS = 20;
+const BORDER_RADIUS = 10;
 
 export default function ProductDetails({route}) {
   let id = route.params.id
@@ -38,7 +39,7 @@ export default function ProductDetails({route}) {
     setTimeout(() => {
       axios.get(`${REACT_APP_URL}videogames/${id}`)
       .then(res => {
-        setGame(res.data)
+        setGame({...res.data, Screenshots: [{image: res.data.background_image}, ...res.data.Screenshots]})
         axios.get(`${REACT_APP_URL}reviews/${id}`)
         .then(res => setReviews(res.data.filter((e)=> !e.reported)))
         .catch(err => console.log(err))
@@ -131,6 +132,9 @@ export default function ProductDetails({route}) {
         </View>
         )}
       />
+
+      <View style={styles.descriptionContainer}>
+        <Text style={styles.price}>{game.price}$</Text>
       <View style={styles.btnContainer}>
       <TouchableHighlight
           style={styles.button}
@@ -145,11 +149,44 @@ export default function ProductDetails({route}) {
           <Text style={styles.textButton}>Add to WhishList</Text>
       </TouchableHighlight>
       </View>
-      <View className='verticalScrollable1'>
-        {reviews && reviews.map((e) => {
-          return(<ReviewCard></ReviewCard>)
-        })}
       </View>
+
+
+      <View style={styles.descriptionContainer}>
+        <ReadMore
+          numberOfLines={3}
+          renderTruncatedFooter={_renderTruncatedFooter}
+          renderRevealedFooter={_renderRevealedFooter}
+          onReady={_handleTextReady}>
+          <Text style={styles.description}>
+            {game.description}
+          </Text>
+        </ReadMore>
+      </View>
+
+
+      <View className='verticalScrollable1'>
+        <FlatList
+        contentContainerStyle={{alignItems: 'center'}}
+        keyExtractor={item => item.id}
+        horizontal
+        data={reviews}
+        pagingEnabled 
+        showsHorizontalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <View style={{width: '100%'}}>
+            <Text>{item.username}</Text>
+          </View>
+          )}
+        />
+      </View>
+
+
+      <View style={styles.descriptionContainer}>
+        <Text>Platforms</Text>
+        {game.platforms?.map(e => (<Text> {e.name}</Text>))}
+      </View>
+
     </ScrollView>
   );
 }
@@ -172,33 +209,79 @@ const styles = StyleSheet.create({
   },
   itemImage: {
     width: '100%',
-    height: ITEM_LENGTH,
+    height: 200,
     borderRadius: BORDER_RADIUS,
     resizeMode: 'cover',
   },
   name: {
     textAlign: 'center',
-    fontSize: 50
+    fontSize: 40
   },
   btnContainer: {
-    alignItems: 'center',
+
   },
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
+    paddingVertical: 7,
     paddingHorizontal: 32,
     borderRadius: 4,
     elevation: 3,
     backgroundColor: 'black',
-    marginTop:20,
-    width:200
+    width: 176,
+    marginBottom: 5,
   },
   textButton: {
-    fontSize: 16,
-    lineHeight: 21,
+    fontSize: 14,
     fontWeight: 'bold',
     letterSpacing: 0.25,
     color: 'white',
   },
+  descriptionContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    backgroundColor: '#e8e8e8',
+    marginRight: 10,
+    marginLeft: 10,
+    padding: 10,
+    marginTop: 10,
+    borderRadius: 10,
+    borderColor: '#c7d1d6',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginBottom:5
+  },
+  description: {
+    fontSize: 15
+  },
+  price: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginRight: 50
+  }
 });
+
+function _renderTruncatedFooter(handlePress){
+  return (
+    <Text style={{color: '#9190e0', marginTop: 5}} onPress={handlePress}>
+      Read more
+    </Text>
+  );
+}
+function _renderRevealedFooter(handlePress){
+  return (
+    <Text style={{color: '#9190e0', marginTop: 5}} onPress={handlePress}>
+      Show less
+    </Text>
+  );
+}
+function _handleTextReady(){
+  // ...
+}
