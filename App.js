@@ -17,17 +17,29 @@ import UserProfile from './src/Components/UserProfile/UserProfile';
 import { loadCartStorage } from './src/Components/ShoppingCart/loadCartStorage';
 import { loadWhishListStorage } from './src/Components/WishList/loadWhishListStorage';
 import ShoppingCart from './src/Components/ShoppingCart/ShoppingCart';
+import { extendTheme, NativeBaseProvider } from "native-base";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 const {REACT_APP_URL} = process.env;
 //const REACT_APP_URL = 'http://192.168.0.98:3001/'
 
+const newColorTheme = {
+  brand: {
+    900: "#8287af",
+    800: "#7c83db",
+    700: "#b3bef6",
+  },
+};
+
+const theme = extendTheme({ colors: newColorTheme });
+
 const AppWrapper = () => {
-  console.log(REACT_APP_URL)
   return (
     <Provider store={store}>
+       <NativeBaseProvider theme={theme}>
       <App />
+      </NativeBaseProvider>
     </Provider>
   )
 }

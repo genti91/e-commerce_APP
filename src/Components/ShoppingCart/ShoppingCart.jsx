@@ -26,18 +26,19 @@ export default function ShoppingCart() {
   }, [dispatch])
 
   useEffect(() => {
-    console.log('user: ', user)
+
   }, [cart])
 
 
   cart !== null && (cart.forEach(LS => {
     fg = games.filter(games => LS === games.id);
-    // console.log(fg)
     if (fg.length > 0) {
         filterGames.push(fg[0])
     }
-    ))
   }
+  ))
+
+
   let total = 0;
   if (filterGames){
     filterGames.forEach(e => total+=e.price)
@@ -54,6 +55,7 @@ export default function ShoppingCart() {
         })
         dispatch(clearCart())
         dispatch(getUserOrders(user.id))
+        alert('Successful purchase, your games will be added to your library')
     } else if (data.title === "cancel") {
         setState({ showModal: false, status: "Cancelled" });
     } else {
@@ -67,6 +69,7 @@ export default function ShoppingCart() {
       {!cart || cart.length === 0 ? <Text style={styles.noProducts}>No products yet...</Text> : null}
 
       <FlatList
+        style={styles.list}
         data={filterGames}
         keyExtractor={({ id }) => id.toString()}
         renderItem={({ item }) => 
@@ -146,5 +149,10 @@ const styles = StyleSheet.create({
     marginTop: 70,
     textAlign: 'center',
     fontSize: 20
+  },
+  list: {
+    paddingTop: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
   }
 })

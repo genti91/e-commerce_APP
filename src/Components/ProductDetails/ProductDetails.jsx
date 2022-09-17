@@ -1,9 +1,12 @@
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, Dimensions, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Image, Dimensions, TouchableHighlight, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, addWish } from '../../redux/actions';
+import { Box, useToast } from "native-base";
+import ReviewCard from '../Cards/Reviews/ReviewCard';
+import ReadMore from 'react-native-read-more-text';
 const {REACT_APP_URL} = process.env;
 //const REACT_APP_URL = 'http://192.168.0.98:3001/'
 
@@ -11,13 +14,10 @@ const {REACT_APP_URL} = process.env;
 const {width} = Dimensions.get('window');
 const SPACING = 5;
 const ITEM_LENGTH = width; // Item is a square. Therefore, its height and width are of the same length.
-const BORDER_RADIUS = 20;
+const BORDER_RADIUS = 10;
 
 export default function ProductDetails({route}) {
-
-  console.log(route.params.name)
   let id = route.params.id
-
   const [game, setGame] = useState({});
   const [disabled, setDisabled] = useState(true); // si no esta logueado desabilita addwish
   let cart = useSelector(state=>state.cart);
@@ -26,10 +26,10 @@ export default function ProductDetails({route}) {
   const [reviews, setReviews] = useState();
   let owned = false;
   let gam = userOrders.filter((e)=> e.game_id === id)
-  console.log('game: ',gam)
   if (gam.length > 0) {
     owned = true;
   }
+  const toast = useToast();
   
   let user = useSelector(state => state.users); // se trae el usuario logueado para permitir agregar a wishlist
   let dispatch = useDispatch();
@@ -39,7 +39,7 @@ export default function ProductDetails({route}) {
     setTimeout(() => {
       axios.get(`${REACT_APP_URL}videogames/${id}`)
       .then(res => {
-        setGame(res.data)
+        setGame({...res.data, Screenshots: [{image: res.data.background_image}, ...res.data.Screenshots]})
         axios.get(`${REACT_APP_URL}reviews/${id}`)
         .then(res => setReviews(res.data.filter((e)=> !e.reported)))
         .catch(err => console.log(err))
@@ -54,11 +54,30 @@ export default function ProductDetails({route}) {
       fC = cart.filter(e=>e===id);
     }
     if (owned) {
-      alert("You already own this game!")
+      toast.show({
+        render: () => {
+          return <Box bg="yellow.500" px="2" py="1" rounded="sm" mb={5}>
+                  You already own this game!
+                </Box>;
+        }
+      })
     }else if(fC && fC.length>0){
-    alert("Juego ya agregado al carrito anteriormente!")
+    toast.show({
+      render: () => {
+        return <Box bg="red.500" px="2" py="1" rounded="sm" mb={5}>
+                Game already in cart!
+              </Box>;
+      }
+    })
     }else{
       dispatch(addToCart(game.id)) // dispacha al carrito de compras con el id del game en la db
+      toast.show({
+        render: () => {
+          return <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
+                  Game added to cart!
+                </Box>;
+        }
+      })
     }
   }
 
@@ -68,16 +87,35 @@ export default function ProductDetails({route}) {
       fC = wishlist.filter(e=>e===id);
     }
     if (owned) {
-      alert("You already own this game!")
+      toast.show({
+        render: () => {
+          return <Box bg="yellow.500" px="2" py="1" rounded="sm" mb={5}>
+                  You already own this game!
+                </Box>;
+        }
+      })
     }else if(fC && fC.length>0){
-    alert("Juego ya agregado al la whish list anteriormente!")
+      toast.show({
+        render: () => {
+          return <Box bg="red.500" px="2" py="1" rounded="sm" mb={5}>
+                  Game already in wishlist!
+                </Box>;
+        }
+      })
     }else{
       dispatch(addWish(game.id)) // dispacha al carrito de compras con el id del game en la db
+      toast.show({
+        render: () => {
+          return <Box bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
+                  Game added to wishlist!
+                </Box>;
+        }
+      })
     }
   }
 
   return (
-    <View>
+    <ScrollView>
       <Text style={styles.name}>{route.params.name}</Text>
       <FlatList
       contentContainerStyle={{alignItems: 'center'}}
@@ -94,6 +132,9 @@ export default function ProductDetails({route}) {
         </View>
         )}
       />
+
+      <View style={styles.descriptionContainer}>
+        <Text style={styles.price}>{game.price}$</Text>
       <View style={styles.btnContainer}>
       <TouchableHighlight
           style={styles.button}
@@ -108,7 +149,45 @@ export default function ProductDetails({route}) {
           <Text style={styles.textButton}>Add to WhishList</Text>
       </TouchableHighlight>
       </View>
-    </View>
+      </View>
+
+
+      <View style={styles.descriptionContainer}>
+        <ReadMore
+          numberOfLines={3}
+          renderTruncatedFooter={_renderTruncatedFooter}
+          renderRevealedFooter={_renderRevealedFooter}
+          onReady={_handleTextReady}>
+          <Text style={styles.description}>
+            {game.description}
+          </Text>
+        </ReadMore>
+      </View>
+
+
+      <View className='verticalScrollable1'>
+        <FlatList
+        contentContainerStyle={{alignItems: 'center'}}
+        keyExtractor={item => item.id}
+        horizontal
+        data={reviews}
+        pagingEnabled 
+        showsHorizontalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <View style={{width: '100%'}}>
+            <Text>{item.username}</Text>
+          </View>
+          )}
+        />
+      </View>
+
+
+      <View style={styles.descriptionContainer}>
+        <Text>Platforms</Text>
+        {game.platforms?.map(e => (<Text> {e.name}</Text>))}
+      </View>
+
+    </ScrollView>
   );
 }
 
@@ -130,33 +209,79 @@ const styles = StyleSheet.create({
   },
   itemImage: {
     width: '100%',
-    height: ITEM_LENGTH,
+    height: 200,
     borderRadius: BORDER_RADIUS,
     resizeMode: 'cover',
   },
   name: {
     textAlign: 'center',
-    fontSize: 50
+    fontSize: 40
   },
   btnContainer: {
-    alignItems: 'center',
+
   },
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
+    paddingVertical: 7,
     paddingHorizontal: 32,
     borderRadius: 4,
     elevation: 3,
     backgroundColor: 'black',
-    marginTop:20,
-    width:200
+    width: 176,
+    marginBottom: 5,
   },
   textButton: {
-    fontSize: 16,
-    lineHeight: 21,
+    fontSize: 14,
     fontWeight: 'bold',
     letterSpacing: 0.25,
     color: 'white',
   },
+  descriptionContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    backgroundColor: '#e8e8e8',
+    marginRight: 10,
+    marginLeft: 10,
+    padding: 10,
+    marginTop: 10,
+    borderRadius: 10,
+    borderColor: '#c7d1d6',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginBottom:5
+  },
+  description: {
+    fontSize: 15
+  },
+  price: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginRight: 50
+  }
 });
+
+function _renderTruncatedFooter(handlePress){
+  return (
+    <Text style={{color: '#9190e0', marginTop: 5}} onPress={handlePress}>
+      Read more
+    </Text>
+  );
+}
+function _renderRevealedFooter(handlePress){
+  return (
+    <Text style={{color: '#9190e0', marginTop: 5}} onPress={handlePress}>
+      Show less
+    </Text>
+  );
+}
+function _handleTextReady(){
+  // ...
+}
