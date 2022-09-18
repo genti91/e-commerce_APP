@@ -80,7 +80,7 @@ const App = () => {
       {!user && 
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginRN} options={{ headerShown: false }} />
-        <Stack.Screen name="CreateUser" component={CreateUser} />
+        <Stack.Screen name="Create Account" component={CreateUser} />
       </Stack.Navigator>
      }
       {user &&

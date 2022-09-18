@@ -1,5 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, Linking } from 'react-native';
 import React, { useEffect } from 'react'
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -9,16 +8,16 @@ import { findEmail } from "../CreateUser/CreateUserHelper";
 import { useSelector } from "react-redux";
 import { getUsers } from "../../redux/actions";
 import { useNavigation } from '@react-navigation/native';
-const { REACT_APP_URL } = process.env;
-//const REACT_APP_URL = 'http://192.168.0.98:3001/'
+import { Input, Stack, Pressable, Icon, Button, Image, WarningOutlineIcon, FormControl } from "native-base";
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 export default function LoginRN() {
   const navigation = useNavigation();
-    const [user, setUser] = useState({ username: "", password: "" }),
-    [userGet, setUserGet] = useState({ userNExists: false, failedLog: false, userBan: false, isVerified: false }),
-    [disabled, setDisabled] = useState(true),
-    dispatch = useDispatch()
-    let usuario = useSelector(state=>state.users);
+  const [user, setUser] = useState({ username: "", password: "" }),
+  [userGet, setUserGet] = useState({ userNExists: false, failedLog: false, userBan: false, isVerified: false }),
+  [disabled, setDisabled] = useState(true),
+  dispatch = useDispatch()
+  let usuario = useSelector(state=>state.users);
 
   const { userAuth } = useSelector(state => {
     return { userAuth: state.users }
@@ -63,42 +62,68 @@ export default function LoginRN() {
         console.log(err)
     }
   }
-
+  const [show, setShow] = useState(false);
 
   return (
     <View style={styles.container}>
-        <Text style={styles.title}>Login</Text>
-        <TextInput 
-            style={styles.input}
+
+
+
+        <Stack space={4} w="100%" alignItems="center">
+
+        <Image source={require('../../../logo.png')
+        } alt="" size="xl" />
+
+          <Text style={styles.title}>Login</Text>
+          
+          <FormControl w={{base: "75%",md: "25%"}} >
+            <Input 
+            InputLeftElement={<Icon as={<MaterialIcons name="person" />} size={5} ml="2" color="muted.400" />} 
             placeholder="Email"
-            name="username"
-            type="email"
-            id="username"
             value={user.username}
             onChangeText={(e) => handleEmail(e)}
-        />
-        <TextInput
-            secureTextEntry={true}
-            style={styles.input}
+            />
+            <FormControl.ErrorMessage isInvalid={userGet.userNExists} leftIcon={<WarningOutlineIcon size="xs" />}>
+              Email address invalid
+            </FormControl.ErrorMessage>
+            <FormControl.ErrorMessage isInvalid={userGet.userBan} leftIcon={<WarningOutlineIcon size="xs" />}>
+              Email address is banned
+            </FormControl.ErrorMessage>
+            <FormControl.ErrorMessage isInvalid={userGet.isVerified} leftIcon={<WarningOutlineIcon size="xs" />}>
+              Email address not verified
+            </FormControl.ErrorMessage>
+          </FormControl>
+
+          <FormControl w={{base: "75%",md: "25%"}} >
+          <Input
+            type={show ? "text" : "password"} 
+            InputRightElement={
+              <Pressable onPress={() => setShow(!show)}>
+                <Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} 
+                size={5} mr="2" color="muted.400" />
+              </Pressable>
+            } 
             placeholder="Password"
-            name="password"
-            type="password"
-            id="password"
             value={user.password}
             onChangeText={(e) => handlePassword(e)}
-        />
-        <TouchableHighlight
-            style={styles.button}
-            onPress={(e) => handleSubmit(e)}>
-                <Text style={styles.textButton}>Login</Text>
-        </TouchableHighlight>
-        <TouchableHighlight
-            style={styles.button}
-            onPress={() => navigation.navigate('CreateUser')}>
-              <View>
-                <Text style={styles.textButton}>Create an account</Text>
-              </View>
-        </TouchableHighlight>
+            />
+            <FormControl.ErrorMessage isInvalid={userGet.failedLog} leftIcon={<WarningOutlineIcon size="xs" />}>
+              Password is invalid
+            </FormControl.ErrorMessage>
+          </FormControl>
+
+          <Button style={{width: '75%'}} onPress={(e) => handleSubmit(e)}>Login</Button>
+
+          <Button style={{width: '75%'}} onPress={() => navigation.navigate('Create Account')}>Create an account</Button>
+
+          <Button style={{width: '75%'}} size="sm" variant="link" onPress={async (e) => {
+            await Linking.openURL('https://e-commerce-videogames.vercel.app/login');
+          }}>
+            Forgot your password?
+          </Button>
+
+        </Stack>
+
     </View>
   );
 }
@@ -106,8 +131,6 @@ export default function LoginRN() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F5FCFF',
-        marginTop: 30,
         paddingLeft: 15,
         paddingRight: 15,
         justifyContent: 'center'
