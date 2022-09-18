@@ -34,6 +34,7 @@ export default function ProductDetails({route}) {
   }
   const toast = useToast();
   const scrollX = useRef(new Animated.Value(0)).current;
+  const [render, setRender] = useState('');
   
   let user = useSelector(state => state.users); // se trae el usuario logueado para permitir agregar a wishlist
   let dispatch = useDispatch();
@@ -50,7 +51,7 @@ export default function ProductDetails({route}) {
       })
       .catch(err => console.log(err))
     }, 500);
-  }, [id, user]);
+  }, [id, user, render]);
 
   function handleCart(){
     let fC;
@@ -244,7 +245,7 @@ export default function ProductDetails({route}) {
         />)}
       </View>
       </View>
-      <ReviewBox productId={game.id} reviews={reviews} setReviews={setReviews}/>
+      <ReviewBox productId={id} reviews={reviews} setReviews={setReviews}/>
     </ScrollView>
   );
 }
