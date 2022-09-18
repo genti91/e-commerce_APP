@@ -167,22 +167,34 @@ switch(action.type){
            searchered: filtered_searchered_plat
        }
    case ADD_TO_CART:
-
-   
+        if (state.cart && state.cart.length > 0) {
             return{
                 ...state,
                 cart: [...state.cart, action.payload]
             }
+        }else{
+            return{
+                ...state,
+                cart: [action.payload]
+            }
+        }
     case LOAD_CART:
         return{
             ...state,
             cart: action.payload
         }
    case ADD_WISH:
-       return{
-           ...state,
-           wishlist: [...state.wishlist, action.payload]
-       }
+    if (state.wishlist && state.wishlist.length > 0) {
+        return{
+            ...state,
+            wishlist: [...state.wishlist, action.payload]
+        }
+    }else{
+        return{
+            ...state,
+            wishlist: [action.payload]
+        }
+    }
     case LOAD_WISH_LIST:
         return{
             ...state,

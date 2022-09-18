@@ -135,7 +135,7 @@ export function getUsers(token){
             return response.data
         } catch (error) {
             //window.sessionStorage.removeItem('token');
-            console.log(err)
+            console.log(error)
             return;
         }
 
@@ -483,7 +483,7 @@ export function postOrder(payload){
             let json = await axios.post(`${REACT_APP_URL}order/post`, payload)
             return json;
         }catch(e){
-            console.error(e);
+            console.log(e);
         };
     };
 
