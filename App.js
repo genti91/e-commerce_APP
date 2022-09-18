@@ -84,21 +84,24 @@ const App = () => {
       </Stack.Navigator>
      }
       {user &&
-      <Tab.Navigator initialRouteName='HomeStack'>
+      <Tab.Navigator initialRouteName='HomeStack' >
       <Tab.Screen name='WishList' component={WhishList} 
           options={{
+            tabBarLabel:() => {return null},
             tabBarIcon: ({ color, size }) => 
             (<MaterialCommunityIcons name="heart" color={color} size={size} />)
             }}
         />
         <Tab.Screen name='Cart' component={ShoppingCart} 
           options={{
+            tabBarLabel:() => {return null},
             tabBarIcon: ({ color, size }) => 
             (<MaterialCommunityIcons name="cart" color={color} size={size} />)
           }}
         />
         <Tab.Screen name='HomeStack' component={HomeStack} 
           options={{
+            tabBarLabel:() => {return null},
             tabBarIcon: ({ color, size }) => 
             (<MaterialCommunityIcons name="home" color={color} size={size} />),
             headerShown: false,
@@ -106,12 +109,14 @@ const App = () => {
         />
         <Tab.Screen name='MyStore' component={MyStore} 
           options={{
+            tabBarLabel:() => {return null},
             tabBarIcon: ({ color, size }) => 
             (<MaterialCommunityIcons name="library" color={color} size={size} />)
             }}
         />
         <Tab.Screen name='Profile' component={UserProfile} 
           options={{
+            tabBarLabel:() => {return null},
             tabBarIcon: ({ color, size }) => 
             (<MaterialCommunityIcons name="person" color={color} size={size} />)
           }}
