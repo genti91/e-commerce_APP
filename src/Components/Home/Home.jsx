@@ -6,7 +6,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/Ionicons';
 import ProductCard from '../Cards/ProductCard/ProductCard';
 import { Searchbar } from 'react-native-paper'
 import Order from '../Order/Order.jsx'
-import { Button, Box, Fab, Center, Icon, PresenceTransition } from "native-base";
+import { Button, Box, Fab, Center, Icon, PresenceTransition, Spinner } from "native-base";
 import FIlter from '../Filters/FIlterButton';
 //import Pagination from '../Pagination/Pagination';
 //import SideBar from '../SideBar/SideBar';
@@ -22,6 +22,7 @@ export default function Home() {
   let [gamesPerPage, setgamesPerPage] = useState(15);
   let [showButton, setShowButton] = useState(false);
   let [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const indexOfLastGame = currentPage * gamesPerPage;
   const indexOfFirstGame = indexOfLastGame - gamesPerPage;
   //const currentGames = searchered.length ? searchered.slice(indexOfFirstGame, indexOfLastGame) : games.slice(indexOfFirstGame, indexOfLastGame);
@@ -68,6 +69,7 @@ export default function Home() {
         dispatch(clear())
         moveToTop()
     }else{
+        setLoading(true)
         dispatch(searchProduct(name))
         setName("");
         moveToTop()
@@ -94,8 +96,15 @@ export default function Home() {
     dispatch(clear())
   }
 
+  useEffect(() => {
+    setLoading(false)
+  },[currentGames])
+
   return (
     <View>
+
+      
+
       <View style={styles.container}>
           <Searchbar
               style={{marginTop:5, marginBottom:5}}
@@ -117,27 +126,27 @@ export default function Home() {
         <FIlter/>
 
       </View>
-
-          <FlatList
-              ref={flatList}
-              onScroll={(e) => handleScroll(e)}
-              style={{marginBottom:100, marginTop: 5}}
-              showsVerticalScrollIndicator={false}
-              data={currentGames}
-              keyExtractor={({ id }) => id.toString()}
-              refreshing={false}
-              onRefresh={clearRefresh}
-              initialNumToRender={7}
-              maxToRenderPerBatch={5}
-              decelerationRate={0.02}
-              renderItem={({ item }) => 
-              (
-                  <ProductCard 
-                      key={item.id}
-                      item={item}                           
-                  />
-              )}
-          />
+      { loading ? <Spinner style={{marginTop: 50}} color="emerald.500" size="lg" /> :
+      <FlatList
+          ref={flatList}
+          onScroll={(e) => handleScroll(e)}
+          style={{marginBottom:100, marginTop: 5}}
+          showsVerticalScrollIndicator={false}
+          data={currentGames}
+          keyExtractor={({ id }) => id.toString()}
+          refreshing={false}
+          onRefresh={clearRefresh}
+          initialNumToRender={7}
+          maxToRenderPerBatch={5}
+          decelerationRate={0.02}
+          renderItem={({ item }) => 
+          (
+              <ProductCard 
+                  key={item.id}
+                  item={item}                           
+              />
+          )}
+      />}
 
       </View>
       {/* <Box alignItems="center" style={styles.button}>

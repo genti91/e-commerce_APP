@@ -1,19 +1,22 @@
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, Dimensions, TouchableHighlight, ScrollView } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { StyleSheet, Text, View, FlatList, Image, Dimensions, TouchableHighlight, ScrollView, Animated } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, addWish } from '../../redux/actions';
-import { Box, useToast } from "native-base";
+import { Box, useToast, Spinner } from "native-base";
 import ReviewCard from '../Cards/Reviews/ReviewCard';
 import ReadMore from 'react-native-read-more-text';
+import {ExpandingDot} from "react-native-animated-pagination-dots";
+import styles from './DetailsStyles'
+import ReviewBox from '../Review/Review';
 const {REACT_APP_URL} = process.env;
 //const REACT_APP_URL = 'http://192.168.0.98:3001/'
 
 
 const {width} = Dimensions.get('window');
 const SPACING = 5;
-const ITEM_LENGTH = width; // Item is a square. Therefore, its height and width are of the same length.
+const ITEM_LENGTH = width;
 const BORDER_RADIUS = 10;
 
 export default function ProductDetails({route}) {
@@ -30,6 +33,9 @@ export default function ProductDetails({route}) {
     owned = true;
   }
   const toast = useToast();
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const [render, setRender] = useState('');
+  const [loading, setLoading] = useState(true);
   
   let user = useSelector(state => state.users); // se trae el usuario logueado para permitir agregar a wishlist
   let dispatch = useDispatch();
@@ -45,8 +51,9 @@ export default function ProductDetails({route}) {
         .catch(err => console.log(err))
       })
       .catch(err => console.log(err))
+      .finally(() => setLoading(false))
     }, 500);
-  }, [id, user]);
+  }, [id, user, render]);
 
   function handleCart(){
     let fC;
@@ -116,6 +123,8 @@ export default function ProductDetails({route}) {
 
   return (
     <ScrollView>
+      { loading ? <Spinner style={{marginTop: 50}} color="emerald.500" size="lg" /> :
+      <View>
       <Text style={styles.name}>{route.params.name}</Text>
       <FlatList
       contentContainerStyle={{alignItems: 'center'}}
@@ -163,9 +172,43 @@ export default function ProductDetails({route}) {
           </Text>
         </ReadMore>
       </View>
+        
+      <View style={styles.descriptionContainer}>
+        <View style={{alignItems: 'center',}}>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={{fontWeight: 'bold'}}>Rating:</Text>
+            <Text> {game.rating}</Text>
+            <Text style={{fontWeight: 'bold',marginLeft: 10}}>Metacritic:</Text>
+            <Text> {game.metacriticRating}</Text>
+          </View>
+          <View style={{flexDirection: 'row',borderTopWidth: 1}}>
+            <Text style={{fontWeight: 'bold',}}>Esrb:</Text>
+            <Text> {game.esrb_rating}</Text>
+            <Text style={{fontWeight: 'bold',marginLeft: 10}}>Released:</Text>
+            <Text> {game.released}</Text>
+          </View>
+        </View>
+      </View>
 
+      <View style={styles.descriptionContainer}>
+        <View style={{alignItems: 'center',}}>
+          <Text style={{fontWeight: 'bold',}}>Platforms</Text>
+          <Text> {game.platforms?.map(e=>e.name).join(' | ')}</Text>
+        </View>
+      </View>
 
-      <View className='verticalScrollable1'>
+      <View style={styles.descriptionContainer}>
+        <View style={{alignItems: 'center',}}>
+          <Text style={{fontWeight: 'bold',}}>Genres</Text>
+          <Text> {game.genres?.map(e=>e.name).join(' | ')}</Text>
+        </View>
+      </View>
+
+      <View style={{width: ITEM_LENGTH}}>
+      <View style={styles.descriptionContainer}>
+        <View style={{alignItems: 'center',}}>
+        <Text style={{fontWeight: 'bold', marginBottom: 3,}}>Reviews</Text>
+        {!reviews || reviews.length === 0 && (<Text>This game doesn't have any reviews yet!</Text>)}
         <FlatList
         contentContainerStyle={{alignItems: 'center'}}
         keyExtractor={item => item.id}
@@ -173,100 +216,44 @@ export default function ProductDetails({route}) {
         data={reviews}
         pagingEnabled 
         showsHorizontalScrollIndicator={false}
+        decelerationRate={'normal'}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+          {
+            useNativeDriver: false,
+          }
+        )}
         renderItem={({ item }) => (
-          <View style={{width: '100%'}}>
-            <Text>{item.username}</Text>
-          </View>
+            <ReviewCard review={item}/>
           )}
         />
+
       </View>
-
-
-      <View style={styles.descriptionContainer}>
-        <Text>Platforms</Text>
-        {game.platforms?.map(e => (<Text> {e.name}</Text>))}
+        {reviews &&
+        (<ExpandingDot
+          data={reviews}
+          expandingDotWidth={30}
+          scrollX={scrollX}
+          inActiveDotOpacity={0.6}
+          dotStyle={{
+            width: 10,
+            height: 10,
+            backgroundColor: '#347af0',
+            borderRadius: 5,
+            marginHorizontal: 5
+          }}
+          containerStyle={{
+            top: 30,
+          }}
+        />)}
       </View>
-
+      </View>
+      <ReviewBox productId={id} reviews={reviews} setReviews={setReviews}/>
+      </View>}
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {},
-  itemContent: {
-    marginHorizontal: SPACING * 3,
-    alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: BORDER_RADIUS + SPACING * 2,
-  },
-  itemText: {
-    fontSize: 24,
-    position: 'absolute',
-    bottom: SPACING * 2,
-    right: SPACING * 2,
-    color: 'white',
-    fontWeight: '600',
-  },
-  itemImage: {
-    width: '100%',
-    height: 200,
-    borderRadius: BORDER_RADIUS,
-    resizeMode: 'cover',
-  },
-  name: {
-    textAlign: 'center',
-    fontSize: 40
-  },
-  btnContainer: {
-
-  },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 7,
-    paddingHorizontal: 32,
-    borderRadius: 4,
-    elevation: 3,
-    backgroundColor: 'black',
-    width: 176,
-    marginBottom: 5,
-  },
-  textButton: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    letterSpacing: 0.25,
-    color: 'white',
-  },
-  descriptionContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    backgroundColor: '#e8e8e8',
-    marginRight: 10,
-    marginLeft: 10,
-    padding: 10,
-    marginTop: 10,
-    borderRadius: 10,
-    borderColor: '#c7d1d6',
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    marginBottom:5
-  },
-  description: {
-    fontSize: 15
-  },
-  price: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    marginRight: 50
-  }
-});
 
 function _renderTruncatedFooter(handlePress){
   return (

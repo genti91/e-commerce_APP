@@ -37,6 +37,7 @@ export default function WhishList() {
 
   return (
     <View>
+      {!wishlist || wishlist.length === 0 ? <Text style={styles.noProducts}>No products yet...</Text> : null}
       <FlatList
         style={styles.list}
         data={filterGames}
@@ -58,5 +59,10 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     paddingLeft: 10,
     paddingRight: 10,
-  }
+  },
+  noProducts: {
+    marginTop: 70,
+    textAlign: 'center',
+    fontSize: 20
+  },
 })
