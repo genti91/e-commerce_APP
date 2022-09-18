@@ -105,7 +105,7 @@ export default function ProductCard({item}) {
       <View style={styles.textContainer}><Text numberOfLines={1} style={styles.text}>{item.name}</Text></View>
       
       {item.platforms && item.platforms.length > 0 && (
-      <View style={{flexDirection: "row"}}>
+      <View style={{flexDirection: "row", marginTop: 2}}>
       <Text style={styles.platforms} >Available on:</Text>
         {platformsArr.map((e, i) => {
           let img;
@@ -149,8 +149,9 @@ export default function ProductCard({item}) {
         <TouchableWithoutFeedback
             disabled={item.fromApi}
             onPress={(e) => handleClick(e)}
+            //style={{marginRight: 10}}
         >
-            <MaterialCommunityIcons name="close" color='black' size={40}/>
+            <MaterialCommunityIcons name="close" color='black' size={35}/>
         </TouchableWithoutFeedback>
         </View>}
       </View>
@@ -188,7 +189,7 @@ const styles = StyleSheet.create({
     },
     iconImg:{
       marginTop: 6,
-      marginLeft: 10,
+      marginLeft: 7,
       width: 20,
       height: 20,
     },
@@ -198,14 +199,15 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     button: {
-      marginLeft: 40,
+      marginLeft:23
     },
     textContainer: {
-      maxWidth: 200,
+      maxWidth: 170,
     },
     iconContainer: {
+      width: 140,
       paddingLeft: 10,
-      marginTop: 10,
+      marginTop: 7,
       flexDirection: "row",
       height: 38,
     },

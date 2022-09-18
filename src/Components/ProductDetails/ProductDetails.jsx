@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View, FlatList, Image, Dimensions, TouchableHighlight, ScrollView, Animated } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, addWish } from '../../redux/actions';
-import { Box, useToast } from "native-base";
+import { Box, useToast, Spinner } from "native-base";
 import ReviewCard from '../Cards/Reviews/ReviewCard';
 import ReadMore from 'react-native-read-more-text';
 import {ExpandingDot} from "react-native-animated-pagination-dots";
@@ -35,6 +35,7 @@ export default function ProductDetails({route}) {
   const toast = useToast();
   const scrollX = useRef(new Animated.Value(0)).current;
   const [render, setRender] = useState('');
+  const [loading, setLoading] = useState(true);
   
   let user = useSelector(state => state.users); // se trae el usuario logueado para permitir agregar a wishlist
   let dispatch = useDispatch();
@@ -50,6 +51,7 @@ export default function ProductDetails({route}) {
         .catch(err => console.log(err))
       })
       .catch(err => console.log(err))
+      .finally(() => setLoading(false))
     }, 500);
   }, [id, user, render]);
 
@@ -121,6 +123,8 @@ export default function ProductDetails({route}) {
 
   return (
     <ScrollView>
+      { loading ? <Spinner style={{marginTop: 50}} color="emerald.500" size="lg" /> :
+      <View>
       <Text style={styles.name}>{route.params.name}</Text>
       <FlatList
       contentContainerStyle={{alignItems: 'center'}}
@@ -246,6 +250,7 @@ export default function ProductDetails({route}) {
       </View>
       </View>
       <ReviewBox productId={id} reviews={reviews} setReviews={setReviews}/>
+      </View>}
     </ScrollView>
   );
 }
