@@ -8,6 +8,7 @@ import WebView from "react-native-webview";
 import { removeCart } from '../../redux/removeCart';
 import axios from 'axios';
 import { saveCart } from '../../redux/saveCart';
+import { useToast, Box } from 'native-base';
 const {REACT_APP_URL} = process.env;
 //const REACT_APP_URL = 'http://192.168.0.98:3001/'
 
@@ -19,6 +20,7 @@ export default function ShoppingCart() {
   let fg;
   let dispatch = useDispatch();
   const navigation = useNavigation();
+  const toast = useToast();
   //onPress={() => navigation.navigate('Detail', {...item})}
 
   useEffect( () => {
@@ -48,14 +50,24 @@ export default function ShoppingCart() {
 
   function handleResponse(data){
     if (data.title === "success") {
-        setState({ showModal: false, status: "Complete" });
-        filterGames.forEach(async (e) => {
-          //dispatch(postOrder({game_id: e.id, game_name: e.name, price: e.price, user_id: user.id, username: user.username, mercadopago_id: user.id}))
-          await axios.post(`${REACT_APP_URL}order/post`, {game_id: e.id, game_name: e.name, price: e.price, user_id: user.id, username: user.username, mercadopago_id: user.id})
-        })
-        dispatch(clearCart())
-        dispatch(getUserOrders(user.id))
-        alert('Successful purchase, your games will be added to your library')
+      setState({ showModal: false, status: "Complete" });
+      filterGames.forEach(async (e) => {
+        //dispatch(postOrder({game_id: e.id, game_name: e.name, price: e.price, user_id: user.id, username: user.username, mercadopago_id: user.id}))
+        await axios.post(`${REACT_APP_URL}order/post`, {game_id: e.id, game_name: e.name, price: e.price, user_id: user.id, username: user.username, mercadopago_id: user.id})
+      })
+      dispatch(clearCart())
+      dispatch(getUserOrders(user.id))
+      //alert('Successful purchase, your games will be added to your library')
+      toast.show({
+        placement: "top",
+        render: () => {
+          return(
+          <Box style={{alignItems: 'center'}} bg="emerald.500" px="2" py="1" rounded="sm" mb={5}>
+            <Text>Successful purchase,</Text>
+            <Text>your games will be added to your library</Text>
+          </Box>)
+        }
+      })
     } else if (data.title === "cancel") {
         setState({ showModal: false, status: "Cancelled" });
     } else {
@@ -90,7 +102,7 @@ export default function ShoppingCart() {
               onNavigationStateChange={data =>
                   handleResponse(data)
               }
-              injectedJavaScript={`document.f1.submit()`}
+              injectedJavaScript={`document.getElementById('price').value=${`${total}`};document.f1.submit()`}
           />
       </Modal>
 
@@ -99,6 +111,7 @@ export default function ShoppingCart() {
       <TouchableHighlight
           style={styles.button}
           onPress={() => setState({ showModal: true })}
+          disabled={!cart || cart.length === 0 ? true : false}
       >
           <Text style={styles.textButton}>Purchase</Text>
       </TouchableHighlight>
