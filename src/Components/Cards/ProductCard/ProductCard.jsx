@@ -5,11 +5,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import MaterialCommunityIcons from 'react-native-vector-icons/Ionicons';
 import { addToCart, addWish, removeFromCart, removeWish } from '../../../redux/actions';
 import { useEffect } from 'react';
+import { useToast, Box } from 'native-base';
 
 export default function ProductCard({item}) {
 	const navigation = useNavigation();
   const route = useRoute();
   let dispatch = useDispatch();
+  const toast = useToast();
   let cart = useSelector(state => state.cart);
   let userOrders = useSelector(state=>state.userOrders);
   let wishlist = useSelector(state=>state.wishlist);
@@ -58,7 +60,13 @@ export default function ProductCard({item}) {
       fC = cart.filter(e=>e===item.id);
     }
     if (owned) {
-      alert("You already own this game!")
+      toast.show({
+        render: () => {
+          return <Box bg="yellow.500" px="2" py="1" rounded="sm" mb={5}>
+                  You already own this game!
+                </Box>;
+        }
+      })
     }else if(foundCart){
       dispatch(removeFromCart(item.id));
     }else{
@@ -72,7 +80,13 @@ export default function ProductCard({item}) {
       fC = wishlist.filter(e=>e === item.id);
     }
     if (owned) {
-      alert("You already own this game!")
+      toast.show({
+        render: () => {
+          return <Box bg="yellow.500" px="2" py="1" rounded="sm" mb={5}>
+                  You already own this game!
+                </Box>;
+        }
+      })
     }else if(foundWish){
       dispatch(removeWish(item.id))
     }else{
