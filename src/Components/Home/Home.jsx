@@ -7,7 +7,6 @@ import ProductCard from '../Cards/ProductCard/ProductCard';
 import { Searchbar } from 'react-native-paper'
 import Order from '../Order/Order.jsx'
 import { Button, Box, Fab, Center, Icon, PresenceTransition, Spinner } from "native-base";
-import FIlter from '../Filters/FIlterButton';
 //import Pagination from '../Pagination/Pagination';
 //import SideBar from '../SideBar/SideBar';
 //import Filters from "../Filters/Filters"
@@ -106,26 +105,18 @@ export default function Home() {
       
 
       <View style={styles.container}>
+        <View style={{flexDirection: 'row', width: '100%'}}>
           <Searchbar
-              style={{marginTop:5, marginBottom:5}}
+              style={{marginTop:5, marginBottom:5,width:'90%'}}
               placeholder="Search for character..."
               onChangeText={value => handleChange(value)}
               value={name}
               onIconPress={handleSubmit}
               onSubmitEditing={handleSubmit}
           />
-      <View style={styles.filterContainer}>
-          
-          <Order
-            style={{shadowColor: "grey"}}
-            value={selectedIte}
-            data={data}
-            onSelect={onSelect}
-          />
+          <Order/>
+        </View>
 
-        <FIlter/>
-
-      </View>
       { loading ? <Spinner style={{marginTop: 50}} color="emerald.500" size="lg" /> :
       <FlatList
           ref={flatList}
@@ -175,14 +166,14 @@ const styles = StyleSheet.create({
   container: {
       paddingRight: 10,
       paddingLeft: 10,
-      marginBottom: 105,
+      marginBottom: 15,
   },
   button: {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    marginRight: 10,
-    marginBottom: 110,
+    marginRight: 7,
+    marginBottom: 65,
     backgroundColor: '#b2cfd9'
   },
   transition: {

@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     fontSize: 20
   },
   list: {
-    paddingTop: 5,
+    paddingTop: 10,
     paddingLeft: 10,
     paddingRight: 10,
   }
