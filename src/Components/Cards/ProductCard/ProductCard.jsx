@@ -136,7 +136,7 @@ export default function ProductCard({item}) {
           )
         })}
       </View>)}
-      {route.name !== 'Library' ? 
+      {!owned ? 
       <View>
         <View style={styles.iconContainer}> 
           <View style={styles.cart}>
