@@ -107,7 +107,7 @@ const App = () => {
             headerShown: false,
             }}
         />
-        <Tab.Screen name='MyStore' component={MyStore} 
+        <Tab.Screen name='Library' component={MyStore} 
           options={{
             tabBarLabel:() => {return null},
             tabBarIcon: ({ color, size }) => 

@@ -117,7 +117,7 @@ export default function LoginRN() {
           <Button style={{width: '75%'}} onPress={() => navigation.navigate('Create Account')}>Create an account</Button>
 
           <Button style={{width: '75%'}} size="sm" variant="link" onPress={async (e) => {
-            await Linking.openURL('https://e-commerce-videogames.vercel.app/login');
+            await Linking.openURL('https://e-commerce-videogames.vercel.app/restore');
           }}>
             Forgot your password?
           </Button>
