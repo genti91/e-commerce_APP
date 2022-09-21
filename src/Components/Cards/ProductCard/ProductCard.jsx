@@ -136,7 +136,7 @@ export default function ProductCard({item}) {
           )
         })}
       </View>)}
-      {route.name !== 'MyStore' ? 
+      {route.name !== 'Library' ? 
       <View>
         <View style={styles.iconContainer}> 
           <View style={styles.cart}>
@@ -158,7 +158,7 @@ export default function ProductCard({item}) {
           <Text style={styles.noStock}>No Stock</Text>:
           <Text style={styles.price}>{item.price}$</Text>
           }
-      {route.name !== 'Home' && route.name !== 'MyStore' && 
+      {route.name !== 'Home' && route.name !== 'Library' && 
         <View style={styles.button}>
         <TouchableWithoutFeedback
             disabled={item.fromApi}
