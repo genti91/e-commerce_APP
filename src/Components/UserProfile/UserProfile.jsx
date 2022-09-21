@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StyleSheet, Text, View,TouchableHighlight, Image} from 'react-native';
+import { StyleSheet, Text, View,TouchableHighlight, Image, TouchableWithoutFeedback} from 'react-native';
 import { resetUser } from '../../redux/actions';
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,6 +8,8 @@ import { existsUsername, userFormat, validatedFormat, validatedFunctions, findEm
 import { getUsers, putUser } from "../../redux/actions";
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { HelperText, TextInput } from 'react-native-paper';
+import { Box, Avatar, Input, FormControl, WarningOutlineIcon, Stack, Fab, Icon, PresenceTransition, Spinner, Menu, Pressable, HamburgerIcon, Divider, Select, CheckIcon, Button } from "native-base";
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 //import bcrypt from 'bcryptjs'
 
 
@@ -331,102 +333,83 @@ async function handleSubmit(e) {
 
 
     <View style={styles.container}>
-        <Image style={styles.image} source={{uri: actualUser.profile_pic}}/>
-        <Text>Email</Text>
-       { changeToInput.email? 
-        <View>
-            <TextInput onChange={e => handleChange(e)} type="email" value={user.email} name="email" id="email" placeholder={`${actualUser && actualUser.email}`}/>
-            {/* <HelperText type="error" visible={isChange.username && !validate.username} >
-            Username Invalid
-            </HelperText> */}
-        </View>
-       :<View>
-        <Text>{actualUser.email}</Text>
-        <TouchableHighlight
-            style={styles.button}
-            onPress={()=> setChangeToInput({...changeToInput, email: true})}
-        >
-            <Text style={styles.textButton}>Change your email</Text>
-        </TouchableHighlight>
-        </View>
-        }
-        <Text>Name</Text>
-        {
-            changeToInput.name?
-            <View>
-            <TextInput onChange={(e)=>handleChange(e)} value={actualUser.name} name="name" id="name" placeholder={`${actualUser && actualUser.name}`}/>
-            {/* <HelperText type="error" visible={isChange.name && !validate.name} >
-            Username Invalid
-            </HelperText> */}
-        </View>
-            :
-            <View>
-        <Text>{actualUser.name}</Text>
-        <TouchableHighlight
-            style={styles.button}
-            onPress={()=> setChangeToInput({...changeToInput, name: true})}
-        >
-            <Text style={styles.textButton}>Change your name</Text>
-        </TouchableHighlight>
-        </View>
-        }
-        <Text>Lastname</Text>
-        {
-            changeToInput.lastname?
-            <View>
-            <TextInput onChange={(e)=>handleChange(e)} value={actualUser.lastname} name="lastname" id="lastname" placeholder={`${actualUser && actualUser.lastname}`}/>
-            {/* <HelperText type="error" visible={isChange.name && !validate.name} >
-            Username Invalid
-            </HelperText> */}
-            </View>
-            :
-            <View>
-            <Text>{actualUser.lastname}</Text>
-                <TouchableHighlight
-                    style={styles.button}
-                    onPress={()=> setChangeToInput({...changeToInput, lastname: true})} >
-                <Text style={styles.textButton}>Change your lastname</Text>
-                </TouchableHighlight>
-            </View>
-        }
-        <Text>Username</Text>
-        {
-            changeToInput.username?
-            <View>
-            <TextInput onChange={(e)=>handleChange(e)} value={actualUser.username} name="username" id="username" placeholder={`${actualUser && actualUser.username}`}/>
-            {/* <HelperText type="error" visible={isChange.name && !validate.name} >
-            Username Invalid
-            </HelperText> */}
-            </View>
-            :
-            <View>
-            <Text>{actualUser.username}</Text>
-                <TouchableHighlight
-                    style={styles.button}
-                    onPress={()=> setChangeToInput({...changeToInput, username: true})} >
-                <Text style={styles.textButton}>Change your username</Text>
-                </TouchableHighlight>
-            </View>
-        }
+        <Avatar bg="purple.600" alignSelf="center" size="2xl" source={{uri: actualUser.profile_pic}}>
+          PF
+        </Avatar>
+        {/* <Text>Email</Text> */}
+        <Box alignItems="center">
+            <FormControl w="100%" maxW="300px">
+                <FormControl.Label>Email</FormControl.Label>
+                <View style={{flexDirection: 'row'}}>
+                <View style={{width: '90%'}}>
+                <Input onChange={e => handleChange(e)} isDisabled={!changeToInput.email} type="email" name="email" id="email" placeholder={user.email} value={user.email}/>
+                </View>
+                <TouchableWithoutFeedback onPress={()=> setChangeToInput({...changeToInput, email: !changeToInput.email})}>
+                <MaterialIcons style={{marginTop: 5, marginLeft: 10}} name={!changeToInput.email? 'edit' : 'close'} size={30} color='gray'/>
+                </TouchableWithoutFeedback>
+                </View>
+            </FormControl>
+        </Box>
+
+        <Box alignItems="center">
+            <FormControl w="100%" maxW="300px">
+                <FormControl.Label>Name</FormControl.Label>
+                <View style={{flexDirection: 'row'}}>
+                <View style={{width: '90%'}}>
+                <Input isDisabled={!changeToInput.name} onChange={(e)=>handleChange(e)} value={user.name} name="name" id="name" placeholder={`${actualUser && actualUser.name}`}/>
+                </View>
+                <TouchableWithoutFeedback onPress={()=> setChangeToInput({...changeToInput, name: !changeToInput.name})}>
+                <MaterialIcons style={{marginTop: 5, marginLeft: 10}} name={!changeToInput.name? 'edit' : 'close'} size={30} color='gray'/>
+                </TouchableWithoutFeedback>
+                </View>
+            </FormControl>
+        </Box>
+
+        <Box alignItems="center">
+            <FormControl w="100%" maxW="300px">
+                <FormControl.Label>Lastname</FormControl.Label>
+                <View style={{flexDirection: 'row'}}>
+                <View style={{width: '90%'}}>
+                <Input isDisabled={!changeToInput.lastname} onChange={(e)=>handleChange(e)} value={user.lastname} name="lastname" id="lastname" placeholder={`${actualUser && actualUser.lastname}`}/>
+                </View>
+                <TouchableWithoutFeedback onPress={()=> setChangeToInput({...changeToInput, lastname: !changeToInput.lastname})}>
+                <MaterialIcons style={{marginTop: 5, marginLeft: 10}} name={!changeToInput.lastname? 'edit' : 'close'} size={30} color='gray'/>
+                </TouchableWithoutFeedback>
+                </View>
+            </FormControl>
+        </Box>
+
+        <Box alignItems="center">
+            <FormControl w="100%" maxW="300px">
+                <FormControl.Label>Username</FormControl.Label>
+                <View style={{flexDirection: 'row'}}>
+                <View style={{width: '90%'}}>
+                <Input isDisabled={!changeToInput.username} onChange={(e)=>handleChange(e)} value={user.username} name="username" id="username" placeholder={`${actualUser && actualUser.username}`}/>
+                </View>
+                <TouchableWithoutFeedback onPress={()=> setChangeToInput({...changeToInput, username: !changeToInput.username})}>
+                <MaterialIcons style={{marginTop: 5, marginLeft: 10}} name={!changeToInput.username? 'edit' : 'close'} size={30} color='gray'/>
+                </TouchableWithoutFeedback>
+                </View>
+            </FormControl>
+        </Box>
+        
+       
         <View>
         {   changeToInput.email || changeToInput.name || changeToInput.lastname || changeToInput.username ?
-            <View>
-                <TouchableHighlight
-                style={styles.button}
+            <Box style={{width: '100%', marginTop: 20}} alignItems="center">
+                <Button style={{width:'75%', marginBottom: 20}}
                 onPress={() => setChangeToInput({})}>
-                <Text style={styles.textButton}>Cancel changes</Text>
-                 </TouchableHighlight>
-                 <TouchableHighlight
-                style={styles.button}
+                    Cancel changes
+                </Button>
+                <Button style={{width:'75%'}}
                 onPress={(e) => handleSubmit(e)}>
-                <Text style={styles.textButton}>Submit changes</Text>
-                 </TouchableHighlight>
-            </View>
-            : <TouchableHighlight
-                style={styles.button}
-                onPress={(e) => handleLogout(e)}>
-                <Text style={styles.textButton}>Logout</Text>
-            </TouchableHighlight>
+                    Submit changes
+                </Button>
+            </Box>
+            : 
+            <Box style={{width: '100%', marginTop: 20}} alignItems="center">
+                <Button style={{width:'75%'}} onPress={(e) => handleLogout(e)}>Logout</Button>
+            </Box>
         }
         </View>
     </View>
@@ -436,8 +419,7 @@ async function handleSubmit(e) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F5FCFF',
-        marginTop: 30,
+        //backgroundColor: 'white',
         paddingLeft: 15,
         paddingRight: 15,
         justifyContent: "center"
@@ -471,3 +453,97 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     }
 })
+
+
+
+
+
+// { changeToInput.email? 
+//     <View>
+//         <TextInput onChange={e => handleChange(e)} type="email" value={user.email} name="email" id="email" placeholder={`${actualUser && actualUser.email}`}/>
+//         {/* <HelperText type="error" visible={isChange.username && !validate.username} >
+//         Username Invalid
+//         </HelperText> */}
+//     </View>
+//    :<View>
+//     <Text>{actualUser.email}</Text>
+//     <TouchableHighlight
+//         style={styles.button}
+//         onPress={()=> setChangeToInput({...changeToInput, email: true})}
+//     >
+//         <Text style={styles.textButton}>Change your email</Text>
+//     </TouchableHighlight>
+//     </View>
+//     }
+
+
+
+
+
+
+//     <Text>Name</Text>
+//     {
+//         changeToInput.name?
+//         <View>
+//         <TextInput onChange={(e)=>handleChange(e)} value={actualUser.name} name="name" id="name" placeholder={`${actualUser && actualUser.name}`}/>
+//         {/* <HelperText type="error" visible={isChange.name && !validate.name} >
+//         Username Invalid
+//         </HelperText> */}
+//     </View>
+//         :
+//         <View>
+//     <Text>{actualUser.name}</Text>
+//     <TouchableHighlight
+//         style={styles.button}
+//         onPress={()=> setChangeToInput({...changeToInput, name: true})}
+//     >
+//         <Text style={styles.textButton}>Change your name</Text>
+//     </TouchableHighlight>
+//     </View>
+//     }
+
+
+
+
+//     <Text>Lastname</Text>
+//     {
+//         changeToInput.lastname?
+//         <View>
+//         <TextInput onChange={(e)=>handleChange(e)} value={actualUser.lastname} name="lastname" id="lastname" placeholder={`${actualUser && actualUser.lastname}`}/>
+//         {/* <HelperText type="error" visible={isChange.name && !validate.name} >
+//         Username Invalid
+//         </HelperText> */}
+//         </View>
+//         :
+//         <View>
+//         <Text>{actualUser.lastname}</Text>
+//             <TouchableHighlight
+//                 style={styles.button}
+//                 onPress={()=> setChangeToInput({...changeToInput, lastname: true})} >
+//             <Text style={styles.textButton}>Change your lastname</Text>
+//             </TouchableHighlight>
+//         </View>
+//     }
+
+
+
+
+//     <Text>Username</Text>
+//     {
+//         changeToInput.username?
+//         <View>
+//         <TextInput onChange={(e)=>handleChange(e)} value={actualUser.username} name="username" id="username" placeholder={`${actualUser && actualUser.username}`}/>
+//         {/* <HelperText type="error" visible={isChange.name && !validate.name} >
+//         Username Invalid
+//         </HelperText> */}
+//         </View>
+//         :
+//         <View>
+//         <Text>{actualUser.username}</Text>
+//             <TouchableHighlight
+//                 style={styles.button}
+//                 onPress={()=> setChangeToInput({...changeToInput, username: true})} >
+//             <Text style={styles.textButton}>Change your username</Text>
+//             </TouchableHighlight>
+//         </View>
+//     }
