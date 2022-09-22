@@ -20,7 +20,7 @@ export default function UserProfile() {
 let dispatch = useDispatch()
 let actualUser = useSelector(state => state.users.user)
 const [changeToInput, setChangeToInput] = useState({})
-console.log(actualUser)
+//console.log(actualUser)
 
 const [user, setUser] = useState(actualUser),
     [userGet, setUserNames] = useState({ userExist: false, usernameExists: false }),
@@ -30,22 +30,22 @@ const [user, setUser] = useState(actualUser),
     [validate, setvalidate] = useState(validatedFormat);
 
 async function handleLogout(e) {
-        try{
-            await AsyncStorage.clear();
-            dispatch(resetUser());
-        }catch(err){
-            console.log(err)
-        }
+    try{
+        await AsyncStorage.clear();
+        dispatch(resetUser());
+    }catch(err){
+        console.log(err)
     }
+}
 
-async function handleSubmit(e) {
-        e.preventDefault()
-        //manda "user" al back
-        await editUser(user)
+// async function handleSubmit(e) {
+//         e.preventDefault()
+//         //manda "user" al back
+//         await editUser(user)
     
-        //manda "user" a redux
-        dispatch(putUser(user))
-    }
+//         //manda "user" a redux
+//         dispatch(putUser(user))
+//     }
 
 // let userState = useSelector(state => state.user)
 
@@ -89,34 +89,47 @@ useEffect(() => {
     }
 }, [user, isChange, userGet.usernameExists])
 
+// async function handleSubmit(e) {
+//     if (user !== undefined) {
+//         const response = await existsUsername(user.username);
+//         if (response) {
+//             setUserNames((i) => ({ ...i, usernameExists: true }))
+//             return
+//         }
+//         const getUser = await findEmail(user?.email);
+//         if (getUser) {
+//             setUserNames((i) => ({ ...i, userExist: true }));
+//             return
+//         } else if (!getUser) {
+//             await createNewUser(user)
+//         } else {
+//             setDisabled(true)
+//             setvalidate({
+//                 ...validate,
+//                 email: false
+//             });
+//         }
+//         setChange(validatedFormat);
+//         setUser(userFormat);
+//         setvalidate(validatedFormat);
+//         setDisabled(true)
+//         setIsSubmit(true);
+//         setChangeToInput({})
+//     }
+// };
+
 async function handleSubmit(e) {
-    if (user !== undefined) {
-        const response = await existsUsername(user.username);
-        if (response) {
-            setUserNames((i) => ({ ...i, usernameExists: true }))
-            return
-        }
-        const getUser = await findEmail(user?.email);
-        if (getUser) {
-            setUserNames((i) => ({ ...i, userExist: true }));
-            return
-        } else if (!getUser) {
-            await createNewUser(user)
-        } else {
-            setDisabled(true)
-            setvalidate({
-                ...validate,
-                email: false
-            });
-        }
-        setChange(validatedFormat);
-        setUser(userFormat);
-        setvalidate(validatedFormat);
-        setDisabled(true)
-        setIsSubmit(true);
-        setChangeToInput({})
-    }
-};
+    console.log('user: ',user)
+    //e.preventDefault()
+    //manda "user" al back
+    await editUser(user)
+
+    //manda "user" a redux
+    dispatch(putUser(user))
+
+    setChangeToInput({})
+    // window.location.reload()
+}
 
 
 
@@ -341,12 +354,12 @@ async function handleSubmit(e) {
             <FormControl w="100%" maxW="300px">
                 <FormControl.Label>Email</FormControl.Label>
                 <View style={{flexDirection: 'row'}}>
-                <View style={{width: '90%'}}>
-                <Input onChange={e => handleChange(e)} isDisabled={!changeToInput.email} type="email" name="email" id="email" placeholder={user.email} value={user.email}/>
+                <View style={{width: '100%'}}>
+                <Input onChange={e => handleChange(e)} isDisabled={!changeToInput.email} type="email" name="email" id="email" placeholder={user.email} />
                 </View>
-                <TouchableWithoutFeedback onPress={()=> setChangeToInput({...changeToInput, email: !changeToInput.email})}>
+                {/* <TouchableWithoutFeedback onPress={()=> setChangeToInput({...changeToInput, email: !changeToInput.email})}>
                 <MaterialIcons style={{marginTop: 5, marginLeft: 10}} name={!changeToInput.email? 'edit' : 'close'} size={30} color='gray'/>
-                </TouchableWithoutFeedback>
+                </TouchableWithoutFeedback> */}
                 </View>
             </FormControl>
         </Box>
@@ -356,7 +369,7 @@ async function handleSubmit(e) {
                 <FormControl.Label>Name</FormControl.Label>
                 <View style={{flexDirection: 'row'}}>
                 <View style={{width: '90%'}}>
-                <Input isDisabled={!changeToInput.name} onChange={(e)=>handleChange(e)} value={user.name} name="name" id="name" placeholder={`${actualUser && actualUser.name}`}/>
+                <Input isDisabled={!changeToInput.name} onChange={(e)=>handleChange(e)}  name="name" id="name" placeholder={`${actualUser && actualUser.name}`}/>
                 </View>
                 <TouchableWithoutFeedback onPress={()=> setChangeToInput({...changeToInput, name: !changeToInput.name})}>
                 <MaterialIcons style={{marginTop: 5, marginLeft: 10}} name={!changeToInput.name? 'edit' : 'close'} size={30} color='gray'/>
@@ -370,7 +383,7 @@ async function handleSubmit(e) {
                 <FormControl.Label>Lastname</FormControl.Label>
                 <View style={{flexDirection: 'row'}}>
                 <View style={{width: '90%'}}>
-                <Input isDisabled={!changeToInput.lastname} onChange={(e)=>handleChange(e)} value={user.lastname} name="lastname" id="lastname" placeholder={`${actualUser && actualUser.lastname}`}/>
+                <Input isDisabled={!changeToInput.lastname} onChange={(e)=>handleChange(e)}  name="lastname" id="lastname" placeholder={`${actualUser && actualUser.lastname}`}/>
                 </View>
                 <TouchableWithoutFeedback onPress={()=> setChangeToInput({...changeToInput, lastname: !changeToInput.lastname})}>
                 <MaterialIcons style={{marginTop: 5, marginLeft: 10}} name={!changeToInput.lastname? 'edit' : 'close'} size={30} color='gray'/>
@@ -384,7 +397,7 @@ async function handleSubmit(e) {
                 <FormControl.Label>Username</FormControl.Label>
                 <View style={{flexDirection: 'row'}}>
                 <View style={{width: '90%'}}>
-                <Input isDisabled={!changeToInput.username} onChange={(e)=>handleChange(e)} value={user.username} name="username" id="username" placeholder={`${actualUser && actualUser.username}`}/>
+                <Input isDisabled={!changeToInput.username} onChange={(e)=>handleChange(e)}  name="username" id="username" placeholder={`${actualUser && actualUser.username}`}/>
                 </View>
                 <TouchableWithoutFeedback onPress={()=> setChangeToInput({...changeToInput, username: !changeToInput.username})}>
                 <MaterialIcons style={{marginTop: 5, marginLeft: 10}} name={!changeToInput.username? 'edit' : 'close'} size={30} color='gray'/>
