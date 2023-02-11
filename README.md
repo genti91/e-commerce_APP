@@ -1,7 +1,7 @@
 
 # Videogames E-commerce App
 
-This is a React Native based mobile application for a fictional video game e-commerce store. The app has been designed to complement the main web-based e-commerce platform and provide a seamless shopping experience for customers on-the-go.
+This is a React Native based mobile application for a fictional video game e-commerce store. The app has been designed to complement the main e-commerce website and provide a seamless shopping experience for customers on-the-go.
 
 
 ## Features
