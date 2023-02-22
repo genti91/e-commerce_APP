@@ -25,7 +25,7 @@ This is a React Native based mobile application for a fictional video game e-com
 
 
 ## Related
-[main e-commerce website](https://github.com/mrchurches/e-commerce_client)
+[main e-commerce website](https://github.com/genti91/e-commerce_client)
 
 [e-commerce api](https://github.com/Mjosuex85/e-commerce_API)
 
