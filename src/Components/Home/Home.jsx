@@ -25,7 +25,8 @@ import {
 } from "native-base";
 //import Pagination from '../Pagination/Pagination';
 //import SideBar from '../SideBar/SideBar';
-//import Filters from "../Filters/Filters"
+//import Filters from "../Filters/Filters";
+//
 
 export default function Home() {
   let games = useSelector((state) => state.products);

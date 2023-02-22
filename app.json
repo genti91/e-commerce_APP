@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "description": "You can test the app with the following credentials: email: test@test.com password: Test123.",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",

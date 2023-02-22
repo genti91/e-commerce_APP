@@ -32,6 +32,9 @@ export default function LoginRN() {
   }, [user])
 
   function handleEmail(e) {
+    if (e === 'Test@test.com') {
+      e = 'test@test.com';
+    }
     setUser({ ...user, ['username']: e })
     setUserGet((i) => ({ ...i, userNExists: false, userBan: false, isVerified: false }))
   }
@@ -39,6 +42,20 @@ export default function LoginRN() {
   function handlePassword(e) {
     setUser({ ...user, ['password']: e })
     setUserGet((i) => ({ ...i, failedLog: false }))
+  }
+
+  const handleTest = async () => {
+    setUser((i) => ({ ...i, ['username']: 'test@test.com' }))
+    setUserGet((i) => ({ ...i, userNExists: false, userBan: false, isVerified: false }))
+    setUser((i) => ({ ...i, ['password']: 'Test123.' }))
+    setUserGet((i) => ({ ...i, failedLog: false }))
+    try {
+      const info = await postUsers(user);
+      await info?.message?.search('login') && setUserGet((i) => ({ ...i, failedLog: true }));
+      info.token && dispatch(getUsers(info.token)) && window.sessionStorage.setItem('token', info.token);
+    } catch (err) {
+      console.log(err)
+    }
   }
 
 
@@ -56,7 +73,6 @@ export default function LoginRN() {
       const info = await postUsers(user);
       info.message?.search('login') && setUserGet((i) => ({ ...i, failedLog: true }));
       info.token && dispatch(getUsers(info.token)) && window.sessionStorage.setItem('token', info.token);
-        
     }
     }catch(err){
         console.log(err)
@@ -120,6 +136,9 @@ export default function LoginRN() {
             await Linking.openURL('https://e-commerce-videogames.vercel.app/restore');
           }}>
             Forgot your password?
+          </Button>
+          <Button style={{width: '75%'}} size="sm" variant="link" onPress={handleTest}>
+            Or enter with test account
           </Button>
 
         </Stack>
